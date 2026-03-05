@@ -1,0 +1,59 @@
+.wrap { max-width: 860px; }
+
+.section { margin-bottom: 28px; }
+
+.catTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.35rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.count {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  color: var(--text2);
+}
+
+.empty { font-size: 0.83rem; color: var(--text3); font-style: italic; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 9px;
+  max-width: 680px;
+}
+
+.qBtn {
+  aspect-ratio: 1;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 13px;
+  color: var(--text);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.45rem;
+  cursor: pointer;
+  transition: all 0.16s;
+}
+.qBtn:hover {
+  background: var(--gold);
+  color: var(--bg);
+  border-color: var(--gold);
+  transform: scale(1.09);
+  box-shadow: 0 4px 16px rgba(255,215,0,0.28);
+}
+.qBtn.done {
+  background: rgba(0,230,118,0.1);
+  border-color: var(--green);
+  color: var(--green);
+  cursor: not-allowed;
+  opacity: 0.55;
+}

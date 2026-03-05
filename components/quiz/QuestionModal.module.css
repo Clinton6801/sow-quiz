@@ -1,0 +1,85 @@
+.cat {
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.55rem;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+
+.qText {
+  font-size: 1.18rem;
+  font-weight: 700;
+  line-height: 1.55;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.audioBtn {
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  padding: 9px 20px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+  transition: opacity 0.18s, transform 0.18s;
+  cursor: pointer;
+}
+.audioBtn:hover { opacity: 0.85; transform: scale(1.03); }
+
+.answerBox {
+  background: rgba(0,230,118,0.09);
+  border: 1.5px solid var(--green);
+  border-radius: var(--radius-sm);
+  padding: 11px 15px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.answerLabel { font-weight: 900; color: var(--green); }
+.answerVal   { font-weight: 700; color: var(--text); }
+
+.revealBtn { margin-bottom: 16px; }
+
+.awardLabel {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.awardRow { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+
+.awardBtn {
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--tc, var(--gold));
+  background: transparent;
+  color: var(--tc, var(--gold));
+  font-weight: 800;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.awardBtn:hover:not(:disabled) {
+  background: var(--tc, var(--gold));
+  color: #fff;
+  transform: translateY(-2px);
+}
+.awardBtn:disabled { opacity: 0.45; cursor: not-allowed; }

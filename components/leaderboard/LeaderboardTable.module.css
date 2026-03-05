@@ -1,0 +1,33 @@
+.empty { color: var(--text2); text-align: center; padding: 40px; font-style: italic; }
+.wrap  { overflow-x: auto; }
+
+.table { width: 100%; border-collapse: collapse; }
+
+.table th {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem;
+  color: var(--cyan);
+  text-align: left;
+  padding: 10px 16px;
+  border-bottom: 2px solid var(--border2);
+}
+
+.table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.table tr:hover td { background: var(--surface); }
+.table .first td   { background: rgba(255,215,0,0.05); }
+
+.sec {
+  font-size: 0.73rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+}
+
+.score { color: var(--gold); font-size: 1.05rem; }
