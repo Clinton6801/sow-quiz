@@ -1,9 +1,9 @@
 'use client'
 import { useState } from 'react'
-import { Question, CATEGORY_ICONS } from '@/lib/questions'
-import { useGame } from '@/context/GameContext'
-import { useToast } from '@/context/ToastContext'
-import { upsertScore } from '@/lib/scores'
+import { Question, CATEGORY_ICONS } from '../../lib/questions'
+import { useGame } from '../../context/GameContext'
+import { useToast } from '../../context/ToastContext'
+import { upsertScore } from '../../lib/scores'
 import styles from './QuestionModal.module.css'
 
 interface Props {

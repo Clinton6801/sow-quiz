@@ -1,6 +1,6 @@
 'use client'
 import { createContext, useContext, useState, ReactNode } from 'react'
-import { GameState, Team, Round } from '@/lib/types'
+import { GameState, Team, Round } from '../lib/types'
 
 interface GameCtx {
   game: GameState

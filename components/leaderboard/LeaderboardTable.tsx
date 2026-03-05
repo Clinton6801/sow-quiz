@@ -1,4 +1,4 @@
-import { LeaderboardEntry } from '@/lib/scores'
+import { LeaderboardEntry } from '../../lib/scores'
 import styles from './LeaderboardTable.module.css'
 
 const MEDALS = ['🥇', '🥈', '🥉']

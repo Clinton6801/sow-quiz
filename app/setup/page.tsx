@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useGame } from '@/context/GameContext'
-import { SECTIONS } from '@/lib/questions'
-import { Team, Round } from '@/lib/types'
+import { useGame } from '../../context/GameContext'
+import { SECTIONS } from '../../lib/questions'
+import { Team, Round } from '../../lib/types'
 import styles from './page.module.css'
 
 const DEFAULT_TEAMS: Team[] = [

@@ -1,10 +1,10 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useGame } from '@/context/GameContext'
-import { useToast } from '@/context/ToastContext'
-import { getAllForSection, Question } from '@/lib/questions'
-import { upsertScore } from '@/lib/scores'
-import { Team } from '@/lib/types'
+import { useGame } from '../../context/GameContext'
+import { useToast } from '../../context/ToastContext'
+import { getAllForSection, Question } from '../../lib/questions'
+import { upsertScore } from '../../lib/scores'
+import { Team } from '../../lib/types'
 import styles from './Round2FastFingers.module.css'
 
 export default function Round2FastFingers() {

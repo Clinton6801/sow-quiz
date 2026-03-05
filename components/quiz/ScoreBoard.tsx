@@ -1,5 +1,5 @@
 'use client'
-import { useGame } from '@/context/GameContext'
+import { useGame } from '../../context/GameContext'
 import styles from './ScoreBoard.module.css'
 
 export default function ScoreBoard() {

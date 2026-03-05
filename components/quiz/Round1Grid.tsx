@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { useGame } from '@/context/GameContext'
-import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question } from '@/lib/questions'
+import { useGame } from '../../context/GameContext'
+import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question } from '../../lib/questions'
 import QuestionModal from './QuestionModal'
 import styles from './Round1Grid.module.css'
 

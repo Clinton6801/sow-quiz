@@ -1,9 +1,9 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useGame } from '@/context/GameContext'
-import ScoreBoard from '@/components/quiz/ScoreBoard'
-import Round1Grid from '@/components/quiz/Round1Grid'
-import Round2FastFingers from '@/components/quiz/Round2FastFingers'
+import { useGame } from '../../context/GameContext'
+import ScoreBoard from '../../components/quiz/ScoreBoard'
+import Round1Grid from '../../components/quiz/Round1Grid'
+import Round2FastFingers from '../../components/quiz/Round2FastFingers'
 import styles from './page.module.css'
 
 export default function QuizPage() {

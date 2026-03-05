@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getLeaderboard, resetLeaderboard, LeaderboardEntry } from '@/lib/scores'
-import { useToast } from '@/context/ToastContext'
-import LeaderboardTable from '@/components/leaderboard/LeaderboardTable'
+import { getLeaderboard, resetLeaderboard, LeaderboardEntry } from '../../lib/scores'
+import { useToast } from '../../context/ToastContext'
+import LeaderboardTable from '../../components/leaderboard/LeaderboardTable'
 import styles from './page.module.css'
 
 const FILTERS = ['All', 'Lower Primary', 'Upper Primary', 'Junior Secondary', 'Senior Secondary']

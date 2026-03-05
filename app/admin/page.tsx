@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { getQuestions, addQuestion, deleteQuestion, SECTIONS, CATEGORIES, CATEGORY_ICONS, Question, Section, Category } from '@/lib/questions'
-import { useToast } from '@/context/ToastContext'
+import { getQuestions, addQuestion, deleteQuestion, SECTIONS, CATEGORIES, CATEGORY_ICONS, Question, Section, Category } from '../../lib/questions'
+import { useToast } from '../../context/ToastContext'
 import styles from './page.module.css'
 
 export default function AdminPage() {
