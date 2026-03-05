@@ -1,0 +1,71 @@
+.title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.stats {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 15px;
+  font-size: 0.87rem;
+  color: var(--text2);
+  margin-bottom: 14px;
+}
+.stats strong { color: var(--text); }
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 360px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 4px;
+}
+
+.item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 15px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.qInfo  { flex: 1; }
+.qText  { display: block; font-size: 0.93rem; color: var(--text); }
+.qAns   { display: block; font-size: 0.78rem; color: var(--green); font-weight: 700; margin-top: 3px; }
+
+.delBtn {
+  background: rgba(255,23,68,0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+.delBtn:hover { background: var(--danger); color: #fff; }
+
+.addForm {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.addTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.25rem;
+  color: var(--cyan);
+  margin-bottom: 14px;
+}

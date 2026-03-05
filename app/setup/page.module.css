@@ -1,0 +1,33 @@
+.title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.teams { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+.teamRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--border2);
+  flex-shrink: 0;
+}
+
+.colorPicker {
+  width: 44px !important;
+  height: 36px;
+  padding: 2px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  flex-shrink: 0;
+}

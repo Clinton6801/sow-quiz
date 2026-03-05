@@ -1,0 +1,118 @@
+.hero {
+  min-height: calc(100vh - 74px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.logo {
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 32px rgba(255,215,0,0.22);
+  object-fit: cover;
+}
+
+.identityText { text-align: left; }
+
+.school1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.4rem, 7vw, 4.2rem);
+  color: var(--red);
+  line-height: 1;
+}
+
+.school2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.3rem, 3.5vw, 2.2rem);
+  color: var(--navy);
+  line-height: 1;
+}
+
+[data-theme="dark"] .school2 { color: #5b9bff; }
+
+.motto {
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  margin-top: 5px;
+}
+
+.divider {
+  width: 72px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--red), var(--gold));
+  border-radius: 2px;
+  margin: 26px 0 18px;
+}
+
+.appTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  color: var(--text);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.cats {
+  color: var(--text2);
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-bottom: 38px;
+}
+
+.grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 38px;
+}
+
+.card {
+  background: var(--bg2);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 20px;
+  width: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  transition: all 0.22s;
+  box-shadow: var(--shadow);
+}
+.card:hover {
+  border-color: var(--red);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(200,16,46,0.18);
+}
+
+.cardIcon   { font-size: 2.4rem; }
+.cardName   { font-size: 0.86rem; font-weight: 900; color: var(--text); }
+.cardGrades { font-size: 0.73rem; color: var(--text2); font-weight: 700; }
+
+.cta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .card { width: 140px; padding: 22px 14px; }
+  .identityText { text-align: center; }
+}

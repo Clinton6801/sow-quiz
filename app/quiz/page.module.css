@@ -1,0 +1,35 @@
+.notStarted {
+  min-height: calc(100vh - 74px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: var(--text2);
+  font-size: 1.1rem;
+}
+
+.topBar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.roundTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.55rem;
+  color: var(--cyan);
+  line-height: 1;
+}
+
+.sectionLabel {
+  font-size: 0.8rem;
+  color: var(--text2);
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
