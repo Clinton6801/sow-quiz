@@ -24,7 +24,7 @@ function SetupForm() {
 
   useEffect(() => {
     const s = params.get('section')
-    if (s && SECTIONS.includes(s as typeof SECTIONS[number])) setSection(s)
+    if (s && SECTIONS.includes(s as typeof SECTIONS[number])) setSection(s as typeof SECTIONS[number])
   }, [params])
 
   const updateTeam = (i: number, key: keyof Team, val: string) =>
@@ -44,7 +44,7 @@ function SetupForm() {
         <div className="form-row" style={{ marginBottom: 22 }}>
           <div className="form-group">
             <label className="form-label">Grade Section</label>
-            <select value={section} onChange={e => setSection(e.target.value)}>
+            <select value={section} onChange={e => setSection(e.target.value as typeof SECTIONS[number])}>
               {SECTIONS.map(s => <option key={s}>{s}</option>)}
             </select>
           </div>
