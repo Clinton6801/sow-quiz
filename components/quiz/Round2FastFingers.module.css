@@ -15,6 +15,46 @@
 
 .placeholder { color: var(--text2); font-size: 1.05rem; }
 
+.spellingWrap { width: 100%; }
+
+.spellingLabel {
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+}
+
+.spellingWord {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--text);
+  background: var(--surface2);
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  text-align: center;
+  filter: blur(10px);
+  user-select: none;
+  transition: filter 0.4s ease;
+}
+
+.spellingWord.unblurred {
+  filter: blur(0);
+  border-color: var(--gold);
+  background: rgba(255,215,0,0.07);
+}
+
+.blurHint {
+  font-size: 0.72rem;
+  color: var(--text3);
+  text-align: center;
+  margin-top: 5px;
+  font-style: italic;
+}
+
 .qCat {
   font-size: 0.76rem;
   font-weight: 900;
