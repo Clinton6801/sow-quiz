@@ -22,6 +22,51 @@
   color: var(--text);
 }
 
+/* ── Spelling Bee blur ── */
+.spellingWrap {
+  margin-bottom: 16px;
+}
+
+.spellingLabel {
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+}
+
+.spellingWord {
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--text);
+  background: var(--surface2);
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  text-align: center;
+
+  /* Blur the word — contestants can't read it */
+  filter: blur(10px);
+  user-select: none;
+  transition: filter 0.4s ease;
+}
+
+.spellingWord.unblurred {
+  filter: blur(0);
+  border-color: var(--gold);
+  background: rgba(255, 215, 0, 0.07);
+}
+
+.blurHint {
+  font-size: 0.76rem;
+  color: var(--text3);
+  text-align: center;
+  margin-top: 6px;
+  font-style: italic;
+}
+
 .audioBtn {
   background: var(--cyan);
   color: var(--bg);

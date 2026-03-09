@@ -53,9 +53,20 @@ export default function QuestionModal({ question, onClose, onAwarded }: Props) {
 
         <h2 className={styles.heading}>Question</h2>
 
-        <p className={styles.qText}>
-          {isSpelling ? `Spell the word: "${question.question}"` : question.question}
-        </p>
+        {/* For Spelling Bee: show blurred word + audio only. For others: show question normally */}
+        {isSpelling ? (
+          <div className={styles.spellingWrap}>
+            <p className={styles.spellingLabel}>Spell the word:</p>
+            <div className={`${styles.spellingWord} ${revealed ? styles.unblurred : ''}`}>
+              {question.question}
+            </div>
+            {!revealed && (
+              <p className={styles.blurHint}>👆 Word is hidden — use audio for contestants</p>
+            )}
+          </div>
+        ) : (
+          <p className={styles.qText}>{question.question}</p>
+        )}
 
         {isSpelling && (
           <button className={styles.audioBtn} onClick={speak}>
@@ -70,7 +81,7 @@ export default function QuestionModal({ question, onClose, onAwarded }: Props) {
           </div>
         ) : (
           <button className={`btn btn-ghost btn-sm ${styles.revealBtn}`} onClick={() => setRevealed(true)}>
-            👁 Reveal Answer
+            👁 Reveal Word &amp; Answer
           </button>
         )}
 
