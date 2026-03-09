@@ -1,0 +1,145 @@
+.centered {
+  min-height: calc(100vh - 74px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* Setup & lobby cards */
+.setupCard, .lobbyCard {
+  background: var(--bg2);
+  border: 2px solid var(--gold);
+  border-radius: 24px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  animation: popIn 0.28s ease;
+}
+@keyframes popIn { from{transform:scale(0.92);opacity:0;} to{transform:scale(1);opacity:1;} }
+
+.title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); margin-bottom: 8px; }
+.sub   { font-size: 0.88rem; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
+
+/* Code display */
+.lobbyHint { font-size: 0.82rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center; }
+
+.codeBox {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  letter-spacing: 8px;
+  color: var(--gold);
+  text-align: center;
+  background: var(--surface);
+  border: 3px dashed var(--gold);
+  border-radius: 16px;
+  padding: 16px 24px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 24px rgba(255,215,0,0.4);
+}
+
+.joinUrl {
+  font-size: 0.82rem;
+  color: var(--text2);
+  text-align: center;
+  margin-bottom: 24px;
+}
+.joinUrl strong { color: var(--cyan); }
+
+.waitLabel { font-size: 0.84rem; color: var(--text2); margin-bottom: 10px; font-style: italic; }
+
+.contestantList { margin-bottom: 24px; min-height: 48px; }
+
+.contestantChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border: 2px solid;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.86rem;
+  margin: 4px;
+  background: var(--surface);
+  animation: popIn 0.2s ease;
+}
+
+/* Game screen */
+.gameTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.gameTitle { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--text); line-height: 1; }
+.code      { color: var(--gold); }
+.gameSub   { font-size: 0.8rem; color: var(--text2); margin-top: 3px; }
+
+/* Scores row */
+.scores { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.scoreBadge {
+  background: var(--surface);
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 6px 16px;
+  text-align: center;
+  min-width: 90px;
+  position: relative;
+}
+.crown     { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); font-size: 0.9rem; }
+.scoreName { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
+.scoreVal  { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; line-height: 1.1; }
+
+/* Buzz alert */
+.buzzAlert {
+  background: rgba(255,215,0,0.09);
+  border: 2px solid var(--gold);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+  animation: pulseGold 0.5s ease;
+}
+@keyframes pulseGold {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,215,0,0); }
+  50%      { box-shadow: 0 0 0 10px rgba(255,215,0,0.18); }
+}
+.buzzName    { font-weight: 900; color: var(--gold); font-size: 1.05rem; }
+.buzzActions { display: flex; gap: 8px; }
+
+/* Active question */
+.activeQ {
+  background: var(--surface);
+  border: 2px solid var(--cyan);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.qCat     { font-size: 0.74rem; font-weight: 900; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.qText    { font-size: clamp(1rem, 3vw, 1.2rem); font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 12px; }
+.answerBox { background: rgba(0,230,118,0.09); border: 1.5px solid var(--green); border-radius: 10px; padding: 10px 14px; color: var(--green); font-weight: 700; }
+
+/* Question grid */
+.catSection { margin-bottom: 22px; }
+.catTitle   { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; color: var(--gold); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.catCount   { font-family: 'Nunito', sans-serif; font-size: 0.7rem; font-weight: 900; background: var(--surface2); border: 1px solid var(--border); padding: 2px 9px; border-radius: var(--radius-pill); color: var(--text2); }
+.qGrid      { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 7px; max-width: 700px; }
+.qBtn {
+  aspect-ratio: 1; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 11px; color: var(--text); font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.35rem; cursor: pointer; transition: all 0.15s;
+}
+.qBtn:hover  { background: var(--gold); color: var(--bg); border-color: var(--gold); transform: scale(1.08); }
+.qBtn.qActive { background: var(--cyan); border-color: var(--cyan); color: var(--bg); }
+
+@media (max-width: 480px) {
+  .setupCard, .lobbyCard { padding: 28px 20px; }
+  .codeBox { font-size: 2.8rem; letter-spacing: 5px; }
+  .qGrid   { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
+}
