@@ -5,10 +5,9 @@ import {
   createRoom, updateRoom, deleteRoom, getContestants, awardContestant,
   subscribeToRoom, subscribeToContestants,
   Room, Contestant, QuestionPayload
-} from '@/lib/rooms'
-import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question } from '@/lib/questions'
-import { SECTIONS } from '@/lib/questions'
-import { useToast } from '@/context/ToastContext'
+} from '../../lib/rooms'
+import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, SECTIONS } from '../../lib/questions'
+import { useToast } from '../../context/ToastContext'
 import styles from './page.module.css'
 
 // ── Persistent host ID (so only the creator can control the room) ──
@@ -133,7 +132,7 @@ export default function RoomPage() {
         <p className={styles.sub}>Contestants will join with your room code on their phones</p>
         <div className="form-group" style={{ marginBottom: 16 }}>
           <label className="form-label">Grade Section</label>
-          <select value={section} onChange={e => setSection(e.target.value)}>
+          <select value={section} onChange={e => setSection(e.target.value as typeof SECTIONS[number])}>
             {SECTIONS.map(s => <option key={s}>{s}</option>)}
           </select>
         </div>
@@ -224,7 +223,7 @@ export default function RoomPage() {
       {/* Active question */}
       {activeQ && (
         <div className={styles.activeQ}>
-          <div className={styles.qCat}>{CATEGORY_ICONS[activeQ.category as any]} {activeQ.category}</div>
+          <div className={styles.qCat}>{CATEGORY_ICONS[activeQ.category as Category]} {activeQ.category}</div>
           <p className={styles.qText}>{activeQ.question}</p>
           {revealed
             ? <div className={styles.answerBox}>Answer: <strong>{activeQ.answer}</strong></div>
