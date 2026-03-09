@@ -1,7 +1,7 @@
 'use client'
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getRoom, joinRoom } from '@/lib/rooms'
+import { getRoom, joinRoom } from '../../lib/rooms'
 import styles from './page.module.css'
 
 const COLORS = [

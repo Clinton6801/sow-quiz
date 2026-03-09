@@ -2,13 +2,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { useTheme } from '../../context/ThemeContext'
+import { useTheme } from '@/context/ThemeContext'
 import styles from './Header.module.css'
 
 const NAV = [
   { href: '/',            label: 'Home' },
-  { href: '/setup',       label: 'Setup' },
-  { href: '/quiz',        label: 'Quiz' },
+  { href: '/setup',       label: 'Solo Quiz' },
+  { href: '/room',        label: '🎮 Host Room' },
+  { href: '/join',        label: '🙋 Join' },
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/admin',       label: '⚙ Admin' },
 ]
