@@ -1,33 +1,10 @@
-.title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.2rem;
-  color: var(--gold);
-  margin-bottom: 24px;
-}
+.title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 6vw, 2.2rem); color: var(--gold); margin-bottom: 22px; }
+.teams { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.teamRow { display: flex; align-items: center; gap: 10px; }
+.dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border2); flex-shrink: 0; }
+.colorPicker { width: 40px !important; height: 34px; padding: 2px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; flex-shrink: 0; }
 
-.teams { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-
-.teamRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.dot {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 2px solid var(--border2);
-  flex-shrink: 0;
-}
-
-.colorPicker {
-  width: 44px !important;
-  height: 36px;
-  padding: 2px;
-  border-radius: 8px;
-  border: 1.5px solid var(--border);
-  background: var(--surface);
-  cursor: pointer;
-  flex-shrink: 0;
+@media (max-width: 400px) {
+  .dot { width: 24px; height: 24px; }
+  .colorPicker { width: 36px !important; height: 32px; }
 }

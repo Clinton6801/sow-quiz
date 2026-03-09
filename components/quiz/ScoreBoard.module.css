@@ -1,0 +1,25 @@
+.wrap { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.badge {
+  background: var(--surface);
+  border: 2px solid var(--tc, var(--gold));
+  border-radius: 12px;
+  padding: 6px 14px;
+  text-align: center;
+  min-width: 90px;
+  position: relative;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.badge.leading {
+  box-shadow: 0 0 18px color-mix(in srgb, var(--tc) 45%, transparent);
+  transform: translateY(-2px);
+}
+.crown { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 0.9rem; }
+.name  { font-size: 0.66rem; font-weight: 900; color: var(--tc, var(--gold)); text-transform: uppercase; letter-spacing: 0.5px; }
+.score { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--tc, var(--gold)); line-height: 1.1; }
+
+@media (max-width: 480px) {
+  .wrap  { gap: 6px; }
+  .badge { min-width: 76px; padding: 5px 10px; }
+  .score { font-size: 1.5rem; }
+}

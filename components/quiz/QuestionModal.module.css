@@ -1,130 +1,62 @@
-.cat {
-  font-size: 0.76rem;
-  font-weight: 900;
-  color: var(--gold);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 5px;
-}
-
-.heading {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.55rem;
-  color: var(--cyan);
-  margin-bottom: 12px;
-}
-
-.qText {
-  font-size: 1.18rem;
-  font-weight: 700;
-  line-height: 1.55;
-  margin-bottom: 16px;
-  color: var(--text);
-}
+.cat     { font-size: 0.74rem; font-weight: 900; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+.heading { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.3rem, 4vw, 1.55rem); color: var(--cyan); margin-bottom: 10px; }
+.qText   { font-size: clamp(1rem, 3vw, 1.18rem); font-weight: 700; line-height: 1.55; margin-bottom: 14px; color: var(--text); }
 
 /* ── Spelling Bee blur ── */
-.spellingWrap {
-  margin-bottom: 16px;
-}
-
-.spellingLabel {
-  font-size: 0.82rem;
-  font-weight: 900;
-  color: var(--text2);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin-bottom: 8px;
-}
-
+.spellingWrap { margin-bottom: 14px; }
+.spellingLabel { font-size: 0.78rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 7px; }
 .spellingWord {
-  font-size: 1.8rem;
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
   font-weight: 900;
   letter-spacing: 3px;
   color: var(--text);
   background: var(--surface2);
   border: 2px dashed var(--border2);
   border-radius: var(--radius-sm);
-  padding: 14px 20px;
+  padding: 12px 16px;
   text-align: center;
-
-  /* Blur the word — contestants can't read it */
   filter: blur(10px);
   user-select: none;
   transition: filter 0.4s ease;
+  word-break: break-all;
 }
-
-.spellingWord.unblurred {
-  filter: blur(0);
-  border-color: var(--gold);
-  background: rgba(255, 215, 0, 0.07);
-}
-
-.blurHint {
-  font-size: 0.76rem;
-  color: var(--text3);
-  text-align: center;
-  margin-top: 6px;
-  font-style: italic;
-}
+.spellingWord.unblurred { filter: blur(0); border-color: var(--gold); background: rgba(255,215,0,0.07); }
+.blurHint { font-size: 0.73rem; color: var(--text3); text-align: center; margin-top: 5px; font-style: italic; }
 
 .audioBtn {
-  background: var(--cyan);
-  color: var(--bg);
-  border: none;
-  padding: 9px 20px;
-  border-radius: var(--radius-pill);
-  font-weight: 800;
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 14px;
+  background: var(--cyan); color: var(--bg); border: none;
+  padding: 9px 18px; border-radius: var(--radius-pill);
+  font-weight: 800; font-size: 0.88rem;
+  display: inline-flex; align-items: center; gap: 7px;
+  margin-bottom: 12px; cursor: pointer;
   transition: opacity 0.18s, transform 0.18s;
-  cursor: pointer;
 }
 .audioBtn:hover { opacity: 0.85; transform: scale(1.03); }
 
 .answerBox {
-  background: rgba(0,230,118,0.09);
-  border: 1.5px solid var(--green);
-  border-radius: var(--radius-sm);
-  padding: 11px 15px;
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
+  background: rgba(0,230,118,0.09); border: 1.5px solid var(--green);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
 }
 .answerLabel { font-weight: 900; color: var(--green); }
-.answerVal   { font-weight: 700; color: var(--text); }
+.answerVal   { font-weight: 700; color: var(--text); word-break: break-word; }
 
-.revealBtn { margin-bottom: 16px; }
+.revealBtn { margin-bottom: 14px; }
 
-.awardLabel {
-  font-size: 0.78rem;
-  font-weight: 900;
-  color: var(--text2);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 10px;
-}
-
-.awardRow { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.awardLabel { font-size: 0.76rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 9px; }
+.awardRow   { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
 
 .awardBtn {
-  padding: 9px 16px;
-  border-radius: var(--radius-pill);
+  padding: 8px 14px; border-radius: var(--radius-pill);
   border: 2px solid var(--tc, var(--gold));
-  background: transparent;
-  color: var(--tc, var(--gold));
-  font-weight: 800;
-  font-size: 0.86rem;
-  cursor: pointer;
-  transition: all 0.18s;
+  background: transparent; color: var(--tc, var(--gold));
+  font-weight: 800; font-size: 0.84rem; cursor: pointer; transition: all 0.18s;
 }
-.awardBtn:hover:not(:disabled) {
-  background: var(--tc, var(--gold));
-  color: #fff;
-  transform: translateY(-2px);
-}
+.awardBtn:hover:not(:disabled) { background: var(--tc, var(--gold)); color: #fff; transform: translateY(-2px); }
 .awardBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@media (max-width: 480px) {
+  .awardRow { flex-direction: column; }
+  .awardBtn { width: 100%; text-align: center; justify-content: center; }
+  .spellingWord { letter-spacing: 2px; }
+}
