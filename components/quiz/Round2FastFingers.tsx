@@ -85,11 +85,19 @@ export default function Round2FastFingers() {
                 {current.category === 'Maths' ? '📐' : current.category === 'Spelling Bee' ? '🐝' : '🌍'}
                 &nbsp;{current.category}
               </div>
-              <p className={styles.qText}>
-                {current.category === 'Spelling Bee'
-                  ? `Spell the word: "${current.question}"`
-                  : current.question}
-              </p>
+              {current.category === 'Spelling Bee' ? (
+                <div className={styles.spellingWrap}>
+                  <p className={styles.spellingLabel}>Spell the word:</p>
+                  <div className={`${styles.spellingWord} ${revealed ? styles.unblurred : ''}`}>
+                    {current.question}
+                  </div>
+                  {!revealed && (
+                    <p className={styles.blurHint}>👆 Hidden — use audio for contestants</p>
+                  )}
+                </div>
+              ) : (
+                <p className={styles.qText}>{current.question}</p>
+              )}
               {current.category === 'Spelling Bee' && (
                 <button className={styles.audioBtn} onClick={() => {
                   if (!window.speechSynthesis) return
