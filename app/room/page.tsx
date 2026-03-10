@@ -347,7 +347,8 @@ export default function RoomPage() {
               {(grouped[cat] || []).map((q, i) => (
                 <button key={q.id}
                   className={`${styles.qBtn} ${usedIds.has(q.id) ? styles.qActive : ''}`}
-                  onClick={() => pushQuestion(q)}>
+                  onClick={() => pushQuestion(q)}
+                  disabled={usedIds.has(q.id)}>
                   {i + 1}
                 </button>
               ))}
