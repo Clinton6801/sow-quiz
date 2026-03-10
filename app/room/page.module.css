@@ -136,7 +136,16 @@
   font-size: 1.35rem; cursor: pointer; transition: all 0.15s;
 }
 .qBtn:hover  { background: var(--gold); color: var(--bg); border-color: var(--gold); transform: scale(1.08); }
-.qBtn.qActive { background: var(--cyan); border-color: var(--cyan); color: var(--bg); }
+.qBtn.qActive {
+  background: var(--surface2);
+  border-color: var(--border);
+  color: transparent;
+  opacity: 0.38;
+  filter: blur(1.5px);
+  pointer-events: none;
+  transform: scale(0.9);
+  cursor: default;
+}
 
 @media (max-width: 480px) {
   .setupCard, .lobbyCard { padding: 28px 20px; }

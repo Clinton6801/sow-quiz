@@ -43,6 +43,7 @@ export default function RoomPage() {
   // Game
   const [grouped,    setGrouped]    = useState<Record<string, Question[]>>({})
   const [activeQ,    setActiveQ]    = useState<Question | null>(null)
+  const [usedIds,    setUsedIds]    = useState<Set<string>>(new Set())
   const [revealed,   setRevealed]   = useState(false)
   const [loadingQs,  setLoadingQs]  = useState(false)
   const [timeLeft,   setTimeLeft]   = useState<number | null>(null)
@@ -117,6 +118,7 @@ export default function RoomPage() {
   const pushQuestion = async (q: Question) => {
     if (!room) return
     setActiveQ(q); setRevealed(false); setDoubleOn(room.double_points)
+    setUsedIds(prev => new Set([...prev, q.id]))
     const payload: QuestionPayload = { id: q.id, question: q.question, answer: q.answer, category: q.category }
     await updateRoom(room.code, {
       status: 'question',
@@ -344,7 +346,7 @@ export default function RoomPage() {
             <div className={styles.qGrid}>
               {(grouped[cat] || []).map((q, i) => (
                 <button key={q.id}
-                  className={`${styles.qBtn} ${activeQ?.id === q.id ? styles.qActive : ''}`}
+                  className={`${styles.qBtn} ${usedIds.has(q.id) ? styles.qActive : ''}`}
                   onClick={() => pushQuestion(q)}>
                   {i + 1}
                 </button>
