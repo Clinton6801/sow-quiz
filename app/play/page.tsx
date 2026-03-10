@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { getRoom, getContestants, updateRoom, subscribeToRoom, subscribeToContestants, Room, Contestant } from '@/lib/rooms'
-import { useSound } from '@/hooks/useSound'
+import { getRoom, getContestants, updateRoom, subscribeToRoom, subscribeToContestants, Room, Contestant } from '../../lib/rooms'
+import { useSound } from '../../hooks/useSound'
 import styles from './page.module.css'
 
 interface ContestantInfo { id: string; name: string; color: string; roomCode: string }

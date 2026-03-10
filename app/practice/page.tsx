@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { SECTIONS, CATEGORIES, CATEGORY_ICONS, getQuestions, Section, Category, Question } from '@/lib/questions'
+import { SECTIONS, CATEGORIES, CATEGORY_ICONS, getQuestions, Section, Category, Question } from '../../lib/questions'
 import styles from './page.module.css'
 
 type Stage = 'setup' | 'quiz' | 'results'

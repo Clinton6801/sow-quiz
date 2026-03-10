@@ -10,6 +10,11 @@ export interface Room {
   status: RoomStatus
   current_q: QuestionPayload | null
   buzzed_by: string | null
+  timer_seconds: number
+  timer_started_at: string | null
+  double_points: boolean
+  pts_per_q: number
+  categories: string[]
   created_at: string
 }
 
@@ -26,10 +31,10 @@ export interface Contestant {
   name: string
   team_color: string
   score: number
+  locked_q_id: string
   joined_at: string
 }
 
-// ── Generate a short room code like SOW-4F2 ──
 export function generateCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   let code = 'SOW-'
@@ -37,94 +42,72 @@ export function generateCode(): string {
   return code
 }
 
-// ── Create a new room ──
-export async function createRoom(hostId: string, section: string): Promise<Room> {
+export async function createRoom(hostId: string, opts: {
+  section: string; ptsPerQ: number; timerSeconds: number; categories: string[]
+}): Promise<Room> {
   const code = generateCode()
   const { data, error } = await supabase
     .from('rooms')
-    .insert([{ code, host_id: hostId, section, status: 'waiting' }])
-    .select()
-    .single()
+    .insert([{ code, host_id: hostId, section: opts.section, status: 'waiting',
+      pts_per_q: opts.ptsPerQ, timer_seconds: opts.timerSeconds,
+      categories: opts.categories, double_points: false }])
+    .select().single()
   if (error) throw error
   return data as Room
 }
 
-// ── Get room by code ──
 export async function getRoom(code: string): Promise<Room | null> {
-  const { data, error } = await supabase
-    .from('rooms')
-    .select('*')
-    .eq('code', code.toUpperCase())
-    .single()
+  const { data, error } = await supabase.from('rooms').select('*')
+    .eq('code', code.toUpperCase()).single()
   if (error) return null
   return data as Room
 }
 
-// ── Update room state (host only) ──
 export async function updateRoom(code: string, patch: Partial<Room>): Promise<void> {
   const { error } = await supabase.from('rooms').update(patch).eq('code', code)
   if (error) throw error
 }
 
-// ── Join room as contestant ──
 export async function joinRoom(roomCode: string, name: string, teamColor: string): Promise<Contestant> {
-  const { data, error } = await supabase
-    .from('contestants')
-    .insert([{ room_code: roomCode.toUpperCase(), name, team_color: teamColor }])
-    .select()
-    .single()
+  const { data, error } = await supabase.from('contestants')
+    .insert([{ room_code: roomCode.toUpperCase(), name, team_color: teamColor, locked_q_id: '' }])
+    .select().single()
   if (error) throw error
   return data as Contestant
 }
 
-// ── Get all contestants in a room ──
 export async function getContestants(roomCode: string): Promise<Contestant[]> {
-  const { data, error } = await supabase
-    .from('contestants')
-    .select('*')
-    .eq('room_code', roomCode)
-    .order('score', { ascending: false })
+  const { data, error } = await supabase.from('contestants').select('*')
+    .eq('room_code', roomCode).order('score', { ascending: false })
   if (error) throw error
   return data as Contestant[]
 }
 
-// ── Award points to contestant ──
 export async function awardContestant(contestantId: string, pts: number): Promise<void> {
   const { data: c } = await supabase.from('contestants').select('score').eq('id', contestantId).single()
   if (!c) return
   await supabase.from('contestants').update({ score: c.score + pts }).eq('id', contestantId)
 }
 
-// ── Delete room ──
+export async function lockContestant(contestantId: string, questionId: string): Promise<void> {
+  await supabase.from('contestants').update({ locked_q_id: questionId }).eq('id', contestantId)
+}
+
 export async function deleteRoom(code: string): Promise<void> {
   await supabase.from('rooms').delete().eq('code', code)
 }
 
-// ── Subscribe to room changes (Realtime) ──
 export function subscribeToRoom(code: string, callback: (room: Room) => void) {
-  return supabase
-    .channel(`room:${code}`)
-    .on('postgres_changes', {
-      event: 'UPDATE',
-      schema: 'public',
-      table: 'rooms',
-      filter: `code=eq.${code}`,
-    }, payload => callback(payload.new as Room))
+  return supabase.channel(`room:${code}`)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms',
+      filter: `code=eq.${code}` }, payload => callback(payload.new as Room))
     .subscribe()
 }
 
-// ── Subscribe to contestant changes (Realtime) ──
 export function subscribeToContestants(code: string, callback: (contestants: Contestant[]) => void) {
-  return supabase
-    .channel(`contestants:${code}`)
-    .on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'contestants',
-      filter: `room_code=eq.${code}`,
-    }, async () => {
-      const updated = await getContestants(code)
-      callback(updated)
-    })
-    .subscribe()
+  return supabase.channel(`contestants:${code}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'contestants',
+      filter: `room_code=eq.${code}` }, async () => {
+      callback(await getContestants(code))
+    }).subscribe()
 }

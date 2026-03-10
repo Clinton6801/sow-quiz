@@ -6,11 +6,11 @@ import {
   awardContestant, lockContestant,
   subscribeToRoom, subscribeToContestants,
   Room, Contestant, QuestionPayload
-} from '@/lib/rooms'
-import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS } from '@/lib/questions'
-import { upsertScore } from '@/lib/scores'
-import { useToast } from '@/context/ToastContext'
-import { useSound } from '@/hooks/useSound'
+} from '../../lib/rooms'
+import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS } from '../../lib/questions'
+import { upsertScore } from '../../lib/scores'
+import { useToast } from '../../context/ToastContext'
+import { useSound } from '../../hooks/useSound'
 import styles from './page.module.css'
 
 const ALL_CATS = ['Maths', 'Spelling Bee', 'General Knowledge']
@@ -171,7 +171,7 @@ export default function RoomPage() {
     // Save top scorer to leaderboard
     const sorted = [...contestants].sort((a, b) => b.score - a.score)
     if (sorted[0]) {
-      await upsertScore({ team_name: sorted[0].name, section, score: sorted[0].score, wins: 1 })
+      await upsertScore({ teamName: sorted[0].name, section, addScore: sorted[0].score, addWin: true })
     }
     play('fanfare')
     setStep('end')

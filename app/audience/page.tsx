@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import { getRoom, getContestants, subscribeToRoom, subscribeToContestants, Room, Contestant } from '@/lib/rooms'
+import { getRoom, getContestants, subscribeToRoom, subscribeToContestants, Room, Contestant } from '../../lib/rooms'
 import styles from './page.module.css'
 
 function AudienceView() {
