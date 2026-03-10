@@ -148,3 +148,23 @@
   .buzzBtn { width: 150px; height: 150px; }
   .buzzBtnIcon { font-size: 2.4rem; }
 }
+
+/* ── New additions ── */
+.timerRow   { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.timerBar   { flex: 1; height: 8px; border-radius: 999px; transition: width 0.25s linear, background 0.4s; }
+.timerNum   { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; min-width: 38px; text-align: right; }
+
+.doubleTag  { background: rgba(255,109,0,0.2); border: 1.5px solid #ff6d00; color: #ff6d00; font-size: 0.72rem; font-weight: 900; padding: 2px 8px; border-radius: 999px; margin-left: 8px; }
+
+.buzzedInfo  { margin: 12px 0; }
+.youBuzzed   { color: #FFD700; font-weight: 900; font-size: 1rem; }
+.otherBuzzed { color: var(--text2); font-size: 0.9rem; }
+
+.lockedOut  { background: rgba(255,23,68,0.1); border: 1.5px solid var(--danger); color: var(--danger); font-weight: 900; font-size: 0.84rem; padding: 8px 14px; border-radius: 10px; margin-top: 10px; text-align: center; }
+
+.buzzLocked  { opacity: 0.4; cursor: not-allowed !important; background: var(--surface) !important; border-color: var(--danger) !important; color: var(--danger) !important; }
+.buzzMissed  { background: var(--surface2) !important; border-color: var(--border) !important; color: var(--text2) !important; }
+
+.errorWrap  { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.errorText  { color: var(--danger); font-weight: 700; }
+.loading    { color: var(--text2); padding: 60px; text-align: center; }

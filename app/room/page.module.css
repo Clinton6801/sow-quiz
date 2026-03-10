@@ -143,3 +143,36 @@
   .codeBox { font-size: 2.8rem; letter-spacing: 5px; }
   .qGrid   { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); }
 }
+
+/* ── New additions ── */
+.catPicker   { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.catChip     { padding: 8px 14px; border-radius: 999px; border: 2px solid var(--border); background: var(--surface); color: var(--text2); font-weight: 700; font-size: 0.84rem; cursor: pointer; transition: all 0.18s; }
+.catChip:hover   { border-color: var(--cyan); color: var(--cyan); }
+.catChip.catActive { border-color: var(--cyan); background: rgba(0,229,255,0.1); color: var(--cyan); }
+
+.audienceUrl { font-size: 0.78rem; color: var(--text2); text-align: center; margin-top: 4px; word-break: break-all; }
+
+.timerWrap   { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.timerBarOuter { flex: 1; height: 10px; background: var(--surface2); border-radius: 999px; overflow: hidden; }
+.timerBarInner { height: 100%; border-radius: 999px; transition: width 0.25s linear, background 0.4s; }
+.timerNum    { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; min-width: 42px; text-align: right; transition: color 0.4s; }
+
+.qTopRow     { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.doubleBadge { background: rgba(255,109,0,0.15); border: 2px solid #ff6d00; color: #ff6d00; font-weight: 900; font-size: 0.8rem; padding: 4px 12px; border-radius: 999px; animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+
+.btn-warning { background: rgba(255,109,0,0.15); border-color: #ff6d00; color: #ff6d00; }
+.btn-warning:hover { background: #ff6d00; color: #fff; }
+
+/* End screen */
+.endCard     { background: var(--bg2); border: 2px solid var(--gold); border-radius: 24px; padding: 40px 32px; width: 100%; max-width: 500px; text-align: center; animation: popIn 0.3s ease; }
+@keyframes popIn { from{transform:scale(0.9);opacity:0;}to{transform:scale(1);opacity:1;} }
+.endIcon     { font-size: 4rem; margin-bottom: 10px; }
+.endTitle    { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--gold); margin-bottom: 8px; }
+.endWinner   { font-size: 1.3rem; font-weight: 900; margin-bottom: 20px; }
+.finalScores { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.finalRow    { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 2px solid; border-radius: 12px; padding: 10px 16px; }
+.finalRank   { font-size: 1.3rem; width: 28px; flex-shrink: 0; }
+.finalName   { flex: 1; font-weight: 900; text-align: left; }
+.finalScore  { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; }
+.endBtns     { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
