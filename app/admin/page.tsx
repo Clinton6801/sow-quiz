@@ -1,22 +1,28 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { getQuestions, addQuestion, deleteQuestion, SECTIONS, CATEGORIES, CATEGORY_ICONS, Question, Section, Category } from '../../lib/questions'
-import { useToast } from '../../context/ToastContext'
+import {
+  getQuestions, addQuestion, deleteQuestion,
+  SECTIONS, CATEGORIES, CATEGORY_ICONS, Question, Section, Category
+} from '@/lib/questions'
+import {
+  getPracticeQuestions, addPracticeQuestion, deletePracticeQuestion,
+  PracticeQuestion
+} from '@/lib/practice'
+import { useToast } from '@/context/ToastContext'
 import styles from './page.module.css'
 
-// ── Change this to your preferred admin password ──
 const ADMIN_PASSWORD = 'sow2025'
+type AdminTab = 'quiz' | 'practice'
 
 export default function AdminPage() {
   const { showToast } = useToast()
 
-  // ── Auth state ──
-  const [authed,    setAuthed]   = useState(false)
-  const [pwInput,   setPwInput]  = useState('')
-  const [pwError,   setPwError]  = useState(false)
-  const [showPw,    setShowPw]   = useState(false)
+  // ── Auth ──
+  const [authed,   setAuthed]  = useState(false)
+  const [pwInput,  setPwInput] = useState('')
+  const [pwError,  setPwError] = useState(false)
+  const [showPw,   setShowPw]  = useState(false)
 
-  // Check session storage so refresh doesn't log you out mid-session
   useEffect(() => {
     if (sessionStorage.getItem('sow-admin') === 'true') setAuthed(true)
   }, [])
@@ -24,103 +30,155 @@ export default function AdminPage() {
   const handleLogin = () => {
     if (pwInput === ADMIN_PASSWORD) {
       sessionStorage.setItem('sow-admin', 'true')
-      setAuthed(true)
-      setPwError(false)
+      setAuthed(true); setPwError(false)
     } else {
-      setPwError(true)
-      setPwInput('')
+      setPwError(true); setPwInput('')
     }
   }
-
   const handleLogout = () => {
     sessionStorage.removeItem('sow-admin')
-    setAuthed(false)
-    setPwInput('')
+    setAuthed(false); setPwInput('')
   }
 
-  // ── Quiz data state ──
+  // ── Shared filters ──
+  const [tab,      setTab]      = useState<AdminTab>('quiz')
   const [section,  setSection]  = useState<Section>(SECTIONS[0])
   const [category, setCategory] = useState<Category>(CATEGORIES[0])
-  const [questions, setQs]      = useState<Question[]>([])
-  const [loading,  setLoading]  = useState(false)
-  const [newQ,     setNewQ]     = useState('')
-  const [newA,     setNewA]     = useState('')
-  const [saving,   setSaving]   = useState(false)
 
-  const load = useCallback(async () => {
+  // ── Quiz questions state ──
+  const [quizQs,    setQuizQs]   = useState<Question[]>([])
+  const [quizLoad,  setQuizLoad] = useState(false)
+  const [qNewQ,     setQNewQ]    = useState('')
+  const [qNewA,     setQNewA]    = useState('')
+  const [qSaving,   setQSaving]  = useState(false)
+
+  // ── Practice questions state ──
+  const [practiceQs,   setPracticeQs]  = useState<PracticeQuestion[]>([])
+  const [practiceLoad, setPracticeLoad] = useState(false)
+  const [pNewQ,        setPNewQ]       = useState('')
+  const [pNewA,        setPNewA]       = useState('')
+  const [pNewHint,     setPNewHint]    = useState('')
+  const [pSaving,      setPSaving]     = useState(false)
+
+  // ── Load quiz questions ──
+  const loadQuiz = useCallback(async () => {
     if (!authed) return
-    setLoading(true)
-    try { setQs(await getQuestions(section, category)) }
-    catch { showToast('Error loading', 'error') }
-    finally { setLoading(false) }
+    setQuizLoad(true)
+    try { setQuizQs(await getQuestions(section, category)) }
+    catch { showToast('Error loading quiz questions', 'error') }
+    finally { setQuizLoad(false) }
   }, [section, category, authed])
 
-  useEffect(() => { load() }, [load])
+  // ── Load practice questions ──
+  const loadPractice = useCallback(async () => {
+    if (!authed) return
+    setPracticeLoad(true)
+    try { setPracticeQs(await getPracticeQuestions(section, category)) }
+    catch { showToast('Error loading practice questions', 'error') }
+    finally { setPracticeLoad(false) }
+  }, [section, category, authed])
 
-  const handleDelete = async (id: string) => {
+  useEffect(() => {
+    if (tab === 'quiz') loadQuiz()
+    else loadPractice()
+  }, [tab, section, category, authed])
+
+  // ── Quiz handlers ──
+  const handleAddQuiz = async () => {
+    if (!qNewQ.trim() || !qNewA.trim()) { showToast('Fill both fields', 'error'); return }
+    setQSaving(true)
+    try {
+      await addQuestion({ section, category, question: qNewQ.trim(), answer: qNewA.trim() })
+      showToast('Question added!', 'success')
+      setQNewQ(''); setQNewA(''); loadQuiz()
+    } catch { showToast('Error saving', 'error') }
+    finally { setQSaving(false) }
+  }
+
+  const handleDeleteQuiz = async (id: string) => {
     if (!confirm('Delete this question?')) return
-    try { await deleteQuestion(id); showToast('Deleted', 'success'); load() }
+    try { await deleteQuestion(id); showToast('Deleted', 'success'); loadQuiz() }
     catch { showToast('Error', 'error') }
   }
 
-  const handleAdd = async () => {
-    if (!newQ.trim() || !newA.trim()) { showToast('Fill both fields', 'error'); return }
-    setSaving(true)
+  // ── Practice handlers ──
+  const handleAddPractice = async () => {
+    if (!pNewQ.trim() || !pNewA.trim()) { showToast('Fill question and answer', 'error'); return }
+    setPSaving(true)
     try {
-      await addQuestion({ section, category, question: newQ.trim(), answer: newA.trim() })
-      showToast('Question added!', 'success')
-      setNewQ(''); setNewA(''); load()
+      await addPracticeQuestion({ section, category, question: pNewQ.trim(), answer: pNewA.trim(), hint: pNewHint.trim() })
+      showToast('Practice question added!', 'success')
+      setPNewQ(''); setPNewA(''); setPNewHint(''); loadPractice()
     } catch { showToast('Error saving', 'error') }
-    finally { setSaving(false) }
+    finally { setPSaving(false) }
   }
 
-  // ══════════════════════════════════════
+  const handleDeletePractice = async (id: string) => {
+    if (!confirm('Delete this practice question?')) return
+    try { await deletePracticeQuestion(id); showToast('Deleted', 'success'); loadPractice() }
+    catch { showToast('Error', 'error') }
+  }
+
+  // ══════════════════════════════════
   // PASSWORD GATE
-  // ══════════════════════════════════════
-  if (!authed) {
-    return (
-      <div className={styles.lockScreen}>
-        <div className={styles.lockCard}>
-          <div className={styles.lockIcon}>🔒</div>
-          <h1 className={styles.lockTitle}>Admin Access</h1>
-          <p className={styles.lockSub}>Enter the admin password to manage questions</p>
-
-          <div className={styles.pwWrap}>
-            <input
-              type={showPw ? 'text' : 'password'}
-              className={`${styles.pwInput} ${pwError ? styles.pwError : ''}`}
-              placeholder="Password"
-              value={pwInput}
-              onChange={e => { setPwInput(e.target.value); setPwError(false) }}
-              onKeyDown={e => e.key === 'Enter' && handleLogin()}
-              autoFocus
-            />
-            <button className={styles.eyeBtn} onClick={() => setShowPw(p => !p)} type="button">
-              {showPw ? '🙈' : '👁'}
-            </button>
-          </div>
-
-          {pwError && <p className={styles.errorMsg}>❌ Incorrect password. Try again.</p>}
-
-          <button className="btn btn-primary" onClick={handleLogin} style={{ width: '100%', justifyContent: 'center' }}>
-            Unlock Admin
+  // ══════════════════════════════════
+  if (!authed) return (
+    <div className={styles.lockScreen}>
+      <div className={styles.lockCard}>
+        <div className={styles.lockIcon}>🔒</div>
+        <h1 className={styles.lockTitle}>Admin Access</h1>
+        <p className={styles.lockSub}>Enter the admin password to manage questions</p>
+        <div className={styles.pwWrap}>
+          <input
+            type={showPw ? 'text' : 'password'}
+            className={`${styles.pwInput} ${pwError ? styles.pwError : ''}`}
+            placeholder="Password"
+            value={pwInput}
+            onChange={e => { setPwInput(e.target.value); setPwError(false) }}
+            onKeyDown={e => e.key === 'Enter' && handleLogin()}
+            autoFocus
+          />
+          <button className={styles.eyeBtn} onClick={() => setShowPw(p => !p)} type="button">
+            {showPw ? '🙈' : '👁'}
           </button>
         </div>
+        {pwError && <p className={styles.errorMsg}>❌ Incorrect password. Try again.</p>}
+        <button className="btn btn-primary" onClick={handleLogin} style={{ width: '100%', justifyContent: 'center' }}>
+          Unlock Admin
+        </button>
       </div>
-    )
-  }
+    </div>
+  )
 
-  // ══════════════════════════════════════
-  // ADMIN PANEL (authenticated)
-  // ══════════════════════════════════════
+  // ══════════════════════════════════
+  // ADMIN PANEL
+  // ══════════════════════════════════
   return (
-    <div className="page" style={{ maxWidth: 900 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 10 }}>
+    <div className="page" style={{ maxWidth: 920 }}>
+      {/* Header */}
+      <div className={styles.topBar}>
         <h1 className={styles.title}>⚙ Admin Panel</h1>
         <button className="btn btn-ghost btn-sm" onClick={handleLogout}>🔒 Lock</button>
       </div>
 
-      <div className="form-row" style={{ maxWidth: 540, marginBottom: 20 }}>
+      {/* Tab switcher */}
+      <div className={styles.tabs}>
+        <button
+          className={`${styles.tab} ${tab === 'quiz' ? styles.tabActive : ''}`}
+          onClick={() => setTab('quiz')}>
+          🎮 Quiz Questions
+          <span className={styles.tabCount}>{quizQs.length}</span>
+        </button>
+        <button
+          className={`${styles.tab} ${tab === 'practice' ? styles.tabActive : ''}`}
+          onClick={() => setTab('practice')}>
+          📚 Practice Questions
+          <span className={styles.tabCount}>{practiceQs.length}</span>
+        </button>
+      </div>
+
+      {/* Filters — shared between both tabs */}
+      <div className="form-row" style={{ maxWidth: 540, marginBottom: 16 }}>
         <div className="form-group">
           <label className="form-label">Section</label>
           <select value={section} onChange={e => setSection(e.target.value as Section)}>
@@ -136,43 +194,103 @@ export default function AdminPage() {
       </div>
 
       <div className={styles.stats}>
-        Showing <strong>{CATEGORY_ICONS[category]} {category}</strong> — <strong>{section}</strong>
-        &emsp;·&emsp;<strong>{questions.length}</strong> questions
+        {tab === 'quiz' ? '🎮 Quiz' : '📚 Practice'} —&nbsp;
+        <strong>{CATEGORY_ICONS[category]} {category}</strong> ·&nbsp;
+        <strong>{section}</strong> ·&nbsp;
+        <strong>{tab === 'quiz' ? quizQs.length : practiceQs.length}</strong> questions
       </div>
 
-      <div className={styles.list}>
-        {loading
-          ? <p style={{ color: 'var(--text2)', padding: 16 }}>Loading…</p>
-          : questions.length === 0
-            ? <p style={{ color: 'var(--text3)', fontStyle: 'italic', padding: 16 }}>No questions yet.</p>
-            : questions.map((q, i) => (
-                <div key={q.id} className={styles.item}>
-                  <div className={styles.qInfo}>
-                    <strong className={styles.qText}>{i + 1}. {q.question}</strong>
-                    <span className={styles.qAns}>✓ {q.answer}</span>
+      {/* ══ QUIZ TAB ══ */}
+      {tab === 'quiz' && (
+        <>
+          <div className={styles.list}>
+            {quizLoad
+              ? <p className={styles.listEmpty}>Loading…</p>
+              : quizQs.length === 0
+                ? <p className={styles.listEmpty}>No quiz questions yet for this selection.</p>
+                : quizQs.map((q, i) => (
+                  <div key={q.id} className={styles.item}>
+                    <div className={styles.qInfo}>
+                      <strong className={styles.qText}>{i + 1}. {q.question}</strong>
+                      <span className={styles.qAns}>✓ {q.answer}</span>
+                    </div>
+                    <button className={styles.delBtn} onClick={() => handleDeleteQuiz(q.id)}>Delete</button>
                   </div>
-                  <button className={styles.delBtn} onClick={() => handleDelete(q.id)}>Delete</button>
-                </div>
-              ))
-        }
-      </div>
+                ))
+            }
+          </div>
 
-      <div className={styles.addForm}>
-        <h3 className={styles.addTitle}>➕ Add Question</h3>
-        <div className="form-row" style={{ marginBottom: 14 }}>
-          <div className="form-group" style={{ flex: 2 }}>
-            <label className="form-label">Question / Word</label>
-            <textarea value={newQ} onChange={e => setNewQ(e.target.value)} placeholder="Enter question here…" />
+          <div className={styles.addForm}>
+            <h3 className={styles.addTitle}>➕ Add Quiz Question</h3>
+            <div className="form-row" style={{ marginBottom: 14 }}>
+              <div className="form-group" style={{ flex: 2 }}>
+                <label className="form-label">Question / Word</label>
+                <textarea value={qNewQ} onChange={e => setQNewQ(e.target.value)} placeholder="Enter question here…" rows={3} />
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Answer</label>
+                <textarea value={qNewA} onChange={e => setQNewA(e.target.value)} placeholder="Correct answer…" rows={3} />
+              </div>
+            </div>
+            <button className="btn btn-green btn-sm" onClick={handleAddQuiz} disabled={qSaving}>
+              {qSaving ? 'Saving…' : '+ Add Question'}
+            </button>
           </div>
-          <div className="form-group" style={{ flex: 1 }}>
-            <label className="form-label">Answer</label>
-            <textarea value={newA} onChange={e => setNewA(e.target.value)} placeholder="Correct answer…" />
+        </>
+      )}
+
+      {/* ══ PRACTICE TAB ══ */}
+      {tab === 'practice' && (
+        <>
+          <div className={styles.practiceNote}>
+            💡 Practice questions are for students studying at home. They are separate from quiz questions and include an optional hint.
           </div>
-        </div>
-        <button className="btn btn-green btn-sm" onClick={handleAdd} disabled={saving}>
-          {saving ? 'Saving…' : 'Add Question'}
-        </button>
-      </div>
+
+          <div className={styles.list}>
+            {practiceLoad
+              ? <p className={styles.listEmpty}>Loading…</p>
+              : practiceQs.length === 0
+                ? <p className={styles.listEmpty}>No practice questions yet for this selection.</p>
+                : practiceQs.map((q, i) => (
+                  <div key={q.id} className={styles.item}>
+                    <div className={styles.qInfo}>
+                      <strong className={styles.qText}>{i + 1}. {q.question}</strong>
+                      <span className={styles.qAns}>✓ {q.answer}</span>
+                      {q.hint && <span className={styles.qHint}>💡 {q.hint}</span>}
+                    </div>
+                    <button className={styles.delBtn} onClick={() => handleDeletePractice(q.id)}>Delete</button>
+                  </div>
+                ))
+            }
+          </div>
+
+          <div className={styles.addForm}>
+            <h3 className={styles.addTitle}>➕ Add Practice Question</h3>
+            <div className="form-row" style={{ marginBottom: 14 }}>
+              <div className="form-group" style={{ flex: 2 }}>
+                <label className="form-label">Question / Word</label>
+                <textarea value={pNewQ} onChange={e => setPNewQ(e.target.value)} placeholder="Enter question here…" rows={3} />
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="form-label">Answer</label>
+                <textarea value={pNewA} onChange={e => setPNewA(e.target.value)} placeholder="Correct answer…" rows={3} />
+              </div>
+            </div>
+            <div className="form-group" style={{ marginBottom: 14 }}>
+              <label className="form-label">Hint <span style={{ fontWeight: 400, color: 'var(--text2)' }}>(optional)</span></label>
+              <input
+                type="text"
+                value={pNewHint}
+                onChange={e => setPNewHint(e.target.value)}
+                placeholder="e.g. Think about the water cycle…"
+              />
+            </div>
+            <button className="btn btn-primary btn-sm" onClick={handleAddPractice} disabled={pSaving}>
+              {pSaving ? 'Saving…' : '+ Add Practice Question'}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -1,22 +1,126 @@
-.title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 6vw, 2.2rem); color: var(--gold); margin-bottom: 20px; }
-.stats { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 0.85rem; color: var(--text2); margin-bottom: 14px; }
+/* ── Top bar ── */
+.topBar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.title  { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 6vw, 2.2rem); color: var(--gold); }
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 4px;
+  max-width: 460px;
+}
+.tab {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.tab:hover { color: var(--text); }
+.tab.tabActive {
+  background: var(--bg2);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.tabCount {
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 1px 7px;
+  border-radius: 999px;
+  min-width: 22px;
+  text-align: center;
+}
+.tab.tabActive .tabCount {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+/* ── Filters stats ── */
+.stats {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  color: var(--text2);
+  margin-bottom: 14px;
+}
 .stats strong { color: var(--text); }
-.list { display: flex; flex-direction: column; gap: 7px; max-height: 340px; overflow-y: auto; margin-bottom: 18px; padding-right: 2px; }
-.item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 13px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+
+/* ── Practice note banner ── */
+.practiceNote {
+  background: rgba(0,229,255,0.07);
+  border: 1.5px solid rgba(0,229,255,0.3);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.84rem;
+  color: var(--text2);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+/* ── Question list ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 380px;
+  overflow-y: auto;
+  margin-bottom: 18px;
+  padding-right: 2px;
+}
+.listEmpty { color: var(--text2); font-style: italic; padding: 16px; font-size: 0.88rem; }
+
+.item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 13px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
 .qInfo  { flex: 1; min-width: 0; }
 .qText  { display: block; font-size: 0.9rem; color: var(--text); word-break: break-word; }
 .qAns   { display: block; font-size: 0.76rem; color: var(--green); font-weight: 700; margin-top: 3px; }
-.delBtn { background: rgba(255,23,68,0.1); border: 1px solid var(--danger); color: var(--danger); border-radius: 8px; padding: 4px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all 0.18s; }
+.qHint  { display: block; font-size: 0.74rem; color: var(--cyan); font-weight: 600; margin-top: 3px; font-style: italic; }
+
+.delBtn {
+  background: rgba(255,23,68,0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
 .delBtn:hover { background: var(--danger); color: #fff; }
+
+/* ── Add form ── */
 .addForm  { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; }
 .addTitle { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--cyan); margin-bottom: 12px; }
 
-@media (max-width: 480px) {
-  .item { flex-direction: column; gap: 8px; }
-  .delBtn { align-self: flex-end; }
-}
-
-/* ── Lock Screen ── */
+/* ── Lock screen ── */
 .lockScreen {
   min-height: calc(100vh - 74px);
   display: flex;
@@ -24,7 +128,6 @@
   justify-content: center;
   padding: 24px 16px;
 }
-
 .lockCard {
   background: var(--bg2);
   border: 2px solid var(--gold);
@@ -36,20 +139,12 @@
   box-shadow: 0 24px 64px rgba(0,0,0,0.4);
   animation: popIn 0.28s ease;
 }
-@keyframes popIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to   { transform: scale(1);   opacity: 1; }
-}
-
+@keyframes popIn { from{transform:scale(0.9);opacity:0;} to{transform:scale(1);opacity:1;} }
 .lockIcon  { font-size: 3rem; margin-bottom: 12px; }
 .lockTitle { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); margin-bottom: 6px; }
 .lockSub   { font-size: 0.88rem; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
 
-.pwWrap {
-  position: relative;
-  margin-bottom: 10px;
-}
-
+.pwWrap    { position: relative; margin-bottom: 10px; }
 .pwInput {
   width: 100%;
   padding: 12px 44px 12px 16px;
@@ -62,33 +157,18 @@
 }
 .pwInput:focus   { outline: none; border-color: var(--gold); }
 .pwInput.pwError { border-color: var(--danger); animation: shake 0.35s ease; }
-
-@keyframes shake {
-  0%,100% { transform: translateX(0); }
-  20%,60% { transform: translateX(-8px); }
-  40%,80% { transform: translateX(8px); }
-}
+@keyframes shake { 0%,100%{transform:translateX(0);} 20%,60%{transform:translateX(-8px);} 40%,80%{transform:translateX(8px);} }
 
 .eyeBtn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 4px;
-  line-height: 1;
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 4px; line-height: 1;
 }
-
-.errorMsg {
-  font-size: 0.82rem;
-  color: var(--danger);
-  font-weight: 700;
-  margin-bottom: 14px;
-}
+.errorMsg { font-size: 0.82rem; color: var(--danger); font-weight: 700; margin-bottom: 14px; }
 
 @media (max-width: 480px) {
   .lockCard { padding: 28px 20px; }
+  .item     { flex-direction: column; gap: 8px; }
+  .delBtn   { align-self: flex-end; }
+  .tabs     { max-width: 100%; }
+  .tab      { font-size: 0.78rem; padding: 8px 10px; }
 }
