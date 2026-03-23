@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 
-export type Section  = 'Lower Primary' | 'Upper Primary' | 'Junior Secondary' | 'Senior Secondary'
+export type Section  = 'Sprout' | 'Stepping Stone' | 'Lower Primary' | 'Upper Primary' | 'Junior Secondary' | 'Senior Secondary'
 export type Category = 'Maths' | 'Spelling Bee' | 'General Knowledge'
 
 export interface Question {
@@ -12,7 +12,7 @@ export interface Question {
   created_at: string
 }
 
-export const SECTIONS: Section[]   = ['Lower Primary', 'Upper Primary', 'Junior Secondary', 'Senior Secondary']
+export const SECTIONS: Section[]   = [ 'Sprout', 'Stepping Stone', 'Lower Primary', 'Upper Primary', 'Junior Secondary', 'Senior Secondary']
 export const CATEGORIES: Category[] = ['Maths', 'Spelling Bee', 'General Knowledge']
 export const CATEGORY_ICONS: Record<Category, string> = {
   'Maths':               '📐',
