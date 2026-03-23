@@ -3,8 +3,8 @@ import Link from 'next/link'
 import styles from './page.module.css'
 
 const SECTIONS = [
-  { name: 'Lower Primary',    grades: ' Sprout 2–3',   icon: '🌱' },
-  { name: 'Lower Primary',    grades: 'Stepping Stone-Grade 1',   icon: '🌱' },
+  { name: 'Sprout',    grades: ' Sprout 2–3',   icon: '🌱' },
+  { name: 'Stepping Stone',    grades: 'Stepping Stone-Grade 1',   icon: '🌱' },
   { name: 'Lower Primary',    grades: 'Grade 2–3',   icon: '🌱' },
   { name: 'Upper Primary',    grades: 'Grade 4–6',   icon: '📚' },
   { name: 'Junior Secondary', grades: 'Grade 7–9',   icon: '🔬' },

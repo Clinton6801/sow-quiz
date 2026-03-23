@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import '../styles/globals.css'
-import { ThemeProvider }  from '@/context/ThemeContext'
-import { GameProvider }   from '@/context/GameContext'
-import { ToastProvider }  from '@/context/ToastContext'
-import Header from '@/components/layout/Header'
-import StarsBg from '@/components/layout/StarsBg'
+import { ThemeProvider }  from '../context/ThemeContext'
+import { GameProvider }   from '../context/GameContext'
+import { ToastProvider }  from '../context/ToastContext'
+import Header from '../components/layout/Header'
+import StarsBg from '../components/layout/StarsBg'
 
 export const metadata: Metadata = {
   title: 'Quiz Championship — Seat of Wisdom Group of Schools',
