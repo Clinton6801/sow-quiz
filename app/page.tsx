@@ -3,7 +3,9 @@ import Link from 'next/link'
 import styles from './page.module.css'
 
 const SECTIONS = [
-  { name: 'Lower Primary',    grades: 'Grade 1–3',   icon: '🌱' },
+  { name: 'Lower Primary',    grades: ' Sprout 2–3',   icon: '🌱' },
+  { name: 'Lower Primary',    grades: 'Stepping Stone-Grade 1',   icon: '🌱' },
+  { name: 'Lower Primary',    grades: 'Grade 2–3',   icon: '🌱' },
   { name: 'Upper Primary',    grades: 'Grade 4–6',   icon: '📚' },
   { name: 'Junior Secondary', grades: 'Grade 7–9',   icon: '🔬' },
   { name: 'Senior Secondary', grades: 'Grade 10–12', icon: '🎓' },
