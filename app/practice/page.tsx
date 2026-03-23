@@ -1,6 +1,7 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
-import { SECTIONS, CATEGORIES, CATEGORY_ICONS, getQuestions, Section, Category, Question } from '../../lib/questions'
+import { useState, useCallback } from 'react'
+import { SECTIONS, CATEGORIES, CATEGORY_ICONS, Section, Category } from '@/lib/questions'
+import { getPracticeQuestions, PracticeQuestion } from '@/lib/practice'
 import styles from './page.module.css'
 
 type Stage = 'setup' | 'quiz' | 'results'
@@ -9,9 +10,10 @@ export default function PracticePage() {
   const [stage,    setStage]    = useState<Stage>('setup')
   const [section,  setSection]  = useState<Section>(SECTIONS[0])
   const [category, setCategory] = useState<Category>(CATEGORIES[0])
-  const [questions, setQs]      = useState<Question[]>([])
+  const [questions, setQs]      = useState<PracticeQuestion[]>([])
   const [idx,      setIdx]      = useState(0)
   const [revealed, setRevealed] = useState(false)
+  const [showHint, setShowHint] = useState(false)
   const [score,    setScore]    = useState(0)
   const [answers,  setAnswers]  = useState<('correct'|'wrong'|null)[]>([])
   const [loading,  setLoading]  = useState(false)
@@ -23,12 +25,16 @@ export default function PracticePage() {
   const loadAndStart = useCallback(async () => {
     setLoading(true)
     try {
-      const qs = await getQuestions(section, category)
-      if (qs.length === 0) { alert('No questions found for this selection. Add some in Admin first.'); return }
+      const qs = await getPracticeQuestions(section, category)
+      if (qs.length === 0) {
+        alert('No practice questions found for this selection.\n\nAsk your teacher to add some in the Admin panel under "Practice Questions".')
+        return
+      }
       const shuffled = [...qs].sort(() => Math.random() - 0.5)
       setQs(shuffled)
       setIdx(0)
       setRevealed(false)
+      setShowHint(false)
       setScore(0)
       setStreak(0)
       setBestStreak(0)
@@ -43,24 +49,23 @@ export default function PracticePage() {
     const newAnswers = [...answers]
     newAnswers[idx] = correct ? 'correct' : 'wrong'
     setAnswers(newAnswers)
-
     const newStreak = correct ? streak + 1 : 0
     setStreak(newStreak)
     setBestStreak(prev => Math.max(prev, newStreak))
     if (correct) setScore(s => s + 1)
 
-    // Auto-advance after short delay
     setTimeout(() => {
       if (idx + 1 >= questions.length) {
         setStage('results')
       } else {
         setIdx(i => i + 1)
         setRevealed(false)
+        setShowHint(false)
       }
-    }, 800)
+    }, 700)
   }
 
-  const pct = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0
+  const pct   = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0
   const grade = pct >= 90 ? { label: 'Excellent! 🌟', color: '#FFD700' }
     : pct >= 75 ? { label: 'Great Job! 🎉', color: '#00e676' }
     : pct >= 50 ? { label: 'Good Effort! 👍', color: '#00e5ff' }
@@ -106,7 +111,7 @@ export default function PracticePage() {
     <div className={styles.quizWrap}>
       {/* Progress bar */}
       <div className={styles.progressWrap}>
-        <div className={styles.progressBar} style={{ width: `${((idx) / questions.length) * 100}%` }} />
+        <div className={styles.progressBar} style={{ width: `${(idx / questions.length) * 100}%` }} />
       </div>
 
       {/* Top stats */}
@@ -126,17 +131,25 @@ export default function PracticePage() {
             <div className={`${styles.spellingWord} ${revealed ? styles.unblurred : ''}`}>
               {current.question}
             </div>
-            {!revealed && (
-              <button className={styles.audioBtn} onClick={() => {
-                if (!window.speechSynthesis) return
-                window.speechSynthesis.cancel()
-                const u = new SpeechSynthesisUtterance(current.question)
-                u.rate = 0.75; window.speechSynthesis.speak(u)
-              }}>🔊 Hear the Word</button>
-            )}
+            <button className={styles.audioBtn} onClick={() => {
+              if (!window.speechSynthesis) return
+              window.speechSynthesis.cancel()
+              const u = new SpeechSynthesisUtterance(current.question)
+              u.rate = 0.75; window.speechSynthesis.speak(u)
+            }}>🔊 Hear the Word</button>
           </div>
         ) : (
           <p className={styles.qText}>{current.question}</p>
+        )}
+
+        {/* Hint */}
+        {current.hint && !revealed && (
+          <div className={styles.hintWrap}>
+            {!showHint
+              ? <button className={styles.hintBtn} onClick={() => setShowHint(true)}>💡 Show Hint</button>
+              : <div className={styles.hintBox}>💡 {current.hint}</div>
+            }
+          </div>
         )}
 
         {/* Answer reveal */}
@@ -152,31 +165,24 @@ export default function PracticePage() {
             </div>
             <p className={styles.selfJudge}>Did you get it right?</p>
             <div className={styles.judgeRow}>
-              <button className={`${styles.judgeBtn} ${styles.correct}`} onClick={() => handleAnswer(true)}>
-                ✓ Got it!
-              </button>
-              <button className={`${styles.judgeBtn} ${styles.wrong}`} onClick={() => handleAnswer(false)}>
-                ✗ Missed it
-              </button>
+              <button className={`${styles.judgeBtn} ${styles.correct}`} onClick={() => handleAnswer(true)}>✓ Got it!</button>
+              <button className={`${styles.judgeBtn} ${styles.wrong}`}   onClick={() => handleAnswer(false)}>✗ Missed it</button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Answer history dots */}
+      {/* Dots */}
       <div className={styles.dots}>
         {answers.map((a, i) => (
           <div key={i} className={`${styles.dot}
             ${a === 'correct' ? styles.dotCorrect : a === 'wrong' ? styles.dotWrong : ''}
-            ${i === idx ? styles.dotCurrent : ''}`}
-          />
+            ${i === idx ? styles.dotCurrent : ''}`} />
         ))}
       </div>
 
       <button className="btn btn-ghost btn-sm" onClick={() => setStage('setup')}
-        style={{ marginTop: 16, alignSelf: 'center' }}>
-        ✕ Quit
-      </button>
+        style={{ marginTop: 12, alignSelf: 'center' }}>✕ Quit</button>
     </div>
   )
 
@@ -184,11 +190,8 @@ export default function PracticePage() {
   if (stage === 'results') return (
     <div className={styles.centered}>
       <div className={styles.resultsCard}>
-        <div className={styles.resultIcon}>
-          {pct >= 75 ? '🏆' : pct >= 50 ? '🎯' : '📖'}
-        </div>
+        <div className={styles.resultIcon}>{pct >= 75 ? '🏆' : pct >= 50 ? '🎯' : '📖'}</div>
         <h1 className={styles.resultGrade} style={{ color: grade.color }}>{grade.label}</h1>
-
         <div className={styles.resultScore}>
           <span className={styles.resultNum} style={{ color: grade.color }}>{score}</span>
           <span className={styles.resultDen}>/ {questions.length}</span>
@@ -210,7 +213,6 @@ export default function PracticePage() {
           </div>
         </div>
 
-        {/* Per-question review */}
         <div className={styles.review}>
           <p className={styles.reviewTitle}>Review</p>
           {questions.map((q, i) => (
@@ -219,6 +221,7 @@ export default function PracticePage() {
               <div className={styles.reviewContent}>
                 <p className={styles.reviewQ}>{q.question}</p>
                 <p className={styles.reviewA}>→ {q.answer}</p>
+                {q.hint && <p className={styles.reviewHint}>💡 {q.hint}</p>}
               </div>
             </div>
           ))}

@@ -1,25 +1,25 @@
 .centered { min-height: calc(100vh - 74px); display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
 
 /* Setup */
-.setupCard { background: var(--bg2); border: 2px solid var(--cyan); border-radius: 24px; padding: 40px 36px; width: 100%; max-width: 460px; box-shadow: 0 24px 64px rgba(0,0,0,0.4); animation: popIn 0.28s ease; }
+.setupCard  { background: var(--bg2); border: 2px solid var(--cyan); border-radius: 24px; padding: 40px 36px; width: 100%; max-width: 460px; box-shadow: 0 24px 64px rgba(0,0,0,0.4); animation: popIn 0.28s ease; }
 @keyframes popIn { from{transform:scale(0.92);opacity:0;}to{transform:scale(1);opacity:1;} }
 .setupIcon  { font-size: 2.8rem; text-align: center; margin-bottom: 10px; }
 .setupTitle { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--cyan); text-align: center; margin-bottom: 6px; }
 .setupSub   { font-size: 0.86rem; color: var(--text2); text-align: center; margin-bottom: 28px; }
 .catPicker  { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .catBtn     { padding: 10px 16px; border-radius: 12px; border: 2px solid var(--border); background: var(--surface); color: var(--text2); font-weight: 700; font-size: 0.92rem; cursor: pointer; text-align: left; transition: all 0.18s; }
-.catBtn:hover  { border-color: var(--cyan); color: var(--cyan); }
+.catBtn:hover     { border-color: var(--cyan); color: var(--cyan); }
 .catBtn.catActive { border-color: var(--cyan); background: rgba(0,229,255,0.1); color: var(--cyan); }
 
 /* Quiz layout */
-.quizWrap { max-width: 620px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 16px; min-height: calc(100vh - 74px); }
+.quizWrap     { max-width: 620px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 16px; min-height: calc(100vh - 74px); }
 
 /* Progress */
 .progressWrap { height: 6px; background: var(--surface2); border-radius: 999px; overflow: hidden; }
 .progressBar  { height: 100%; background: var(--cyan); border-radius: 999px; transition: width 0.4s ease; }
 
 /* Top stats */
-.topStats { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.topStats     { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .qCount       { font-weight: 900; color: var(--text2); font-size: 0.88rem; }
 .scoreDisplay { font-weight: 900; color: var(--green); font-size: 0.88rem; }
 .streakBadge  { background: rgba(255,109,0,0.15); border: 1.5px solid #ff6d00; color: #ff6d00; font-weight: 900; font-size: 0.82rem; padding: 3px 12px; border-radius: 999px; animation: popIn 0.2s ease; }
@@ -35,6 +35,12 @@
 .spellingWord  { font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 900; letter-spacing: 4px; background: var(--surface2); border: 2px dashed var(--border2); border-radius: 12px; padding: 14px 20px; text-align: center; width: 100%; filter: blur(8px); user-select: none; transition: filter 0.4s; }
 .spellingWord.unblurred { filter: blur(0); border-color: var(--gold); }
 .audioBtn { background: var(--cyan); color: var(--bg); border: none; padding: 9px 20px; border-radius: 999px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+
+/* Hint */
+.hintWrap { margin-top: 14px; }
+.hintBtn  { background: rgba(255,215,0,0.08); border: 1.5px solid rgba(255,215,0,0.3); color: var(--gold); padding: 7px 16px; border-radius: 999px; font-weight: 700; font-size: 0.84rem; cursor: pointer; transition: all 0.18s; }
+.hintBtn:hover { background: rgba(255,215,0,0.16); border-color: var(--gold); }
+.hintBox  { background: rgba(255,215,0,0.08); border: 1.5px solid rgba(255,215,0,0.3); border-radius: 10px; padding: 10px 14px; font-size: 0.86rem; color: var(--gold); font-style: italic; animation: popIn 0.2s ease; }
 
 /* Answer */
 .answerSection { margin-top: 18px; animation: popIn 0.22s ease; }
@@ -57,22 +63,22 @@
 .dot.dotCurrent { background: var(--cyan); transform: scale(1.3); }
 
 /* Results */
-.resultsCard { background: var(--bg2); border: 2px solid var(--gold); border-radius: 24px; padding: 36px 28px; width: 100%; max-width: 560px; box-shadow: 0 24px 64px rgba(0,0,0,0.4); animation: popIn 0.3s ease; max-height: 90vh; overflow-y: auto; }
-.resultIcon  { font-size: 4rem; text-align: center; margin-bottom: 10px; }
-.resultGrade { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; text-align: center; margin-bottom: 10px; }
-.resultScore { display: flex; align-items: baseline; justify-content: center; gap: 4px; margin-bottom: 4px; }
-.resultNum   { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; line-height: 1; }
-.resultDen   { font-size: 1.4rem; color: var(--text2); font-weight: 700; }
-.resultPct   { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; text-align: center; margin-bottom: 20px; }
-.resultStats { display: flex; gap: 10px; margin-bottom: 24px; }
-.statBox     { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; }
-.statVal     { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--text); }
-.statLabel   { font-size: 0.7rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+.resultsCard  { background: var(--bg2); border: 2px solid var(--gold); border-radius: 24px; padding: 36px 28px; width: 100%; max-width: 560px; box-shadow: 0 24px 64px rgba(0,0,0,0.4); animation: popIn 0.3s ease; max-height: 90vh; overflow-y: auto; }
+.resultIcon   { font-size: 4rem; text-align: center; margin-bottom: 10px; }
+.resultGrade  { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; text-align: center; margin-bottom: 10px; }
+.resultScore  { display: flex; align-items: baseline; justify-content: center; gap: 4px; margin-bottom: 4px; }
+.resultNum    { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; line-height: 1; }
+.resultDen    { font-size: 1.4rem; color: var(--text2); font-weight: 700; }
+.resultPct    { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; text-align: center; margin-bottom: 20px; }
+.resultStats  { display: flex; gap: 10px; margin-bottom: 24px; }
+.statBox      { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; }
+.statVal      { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--text); }
+.statLabel    { font-size: 0.7rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
 
 /* Review */
-.review      { display: flex; flex-direction: column; gap: 7px; margin-bottom: 24px; max-height: 280px; overflow-y: auto; padding-right: 4px; }
-.reviewTitle { font-size: 0.78rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-.reviewRow   { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border-radius: 10px; border: 1px solid; }
+.review        { display: flex; flex-direction: column; gap: 7px; margin-bottom: 24px; max-height: 300px; overflow-y: auto; padding-right: 4px; }
+.reviewTitle   { font-size: 0.78rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.reviewRow     { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border-radius: 10px; border: 1px solid; }
 .reviewCorrect { border-color: var(--green); background: rgba(0,230,118,0.06); }
 .reviewWrong   { border-color: var(--danger); background: rgba(255,23,68,0.06); }
 .reviewIcon    { font-weight: 900; font-size: 0.9rem; flex-shrink: 0; margin-top: 1px; }
@@ -81,6 +87,7 @@
 .reviewContent { flex: 1; min-width: 0; }
 .reviewQ       { font-size: 0.84rem; font-weight: 700; color: var(--text); word-break: break-word; }
 .reviewA       { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
+.reviewHint    { font-size: 0.74rem; color: var(--gold); margin-top: 2px; font-style: italic; }
 .resultBtns    { display: flex; gap: 10px; flex-wrap: wrap; }
 
 @media (max-width: 480px) {
