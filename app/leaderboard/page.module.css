@@ -3,24 +3,36 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 10px;
 }
-.title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 6vw, 2.4rem); color: var(--gold); }
-.filters { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 20px; }
-.fb {
-  padding: 6px 14px; border-radius: var(--radius-pill);
-  border: 1.5px solid var(--border); background: transparent;
-  color: var(--text2); font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: all 0.18s;
-}
-.fb:hover  { border-color: var(--gold); color: var(--gold); }
-.fb.active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
 
-@media (max-width: 480px) {
-  .fb { padding: 5px 10px; font-size: 0.76rem; }
+.title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  color: var(--gold);
 }
+
+.filters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.fb {
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  font-weight: 700;
+  font-size: 0.83rem;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.fb:hover { border-color: var(--gold); color: var(--gold); }
+.fb.active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
 
 .timeFilters { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
 .timeFb      { padding: 6px 18px; border-radius: 999px; border: 2px solid var(--border); background: transparent; color: var(--text2); font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: all 0.18s; }
-.timeFb:hover    { border-color: var(--gold); color: var(--gold); }
+.timeFb:hover      { border-color: var(--gold); color: var(--gold); }
 .timeFb.timeActive { border-color: var(--gold); background: rgba(255,215,0,0.1); color: var(--gold); }
