@@ -1,14 +1,4 @@
-.notStarted {
-  min-height: calc(100vh - 74px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  color: var(--text2);
-  font-size: 1.1rem;
-}
-
+/* ── Active quiz top bar ── */
 .topBar {
   display: flex;
   align-items: flex-start;
@@ -17,18 +7,94 @@
   gap: 14px;
   margin-bottom: 24px;
 }
+.roundTitle   { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.4rem, 4vw, 2rem); color: var(--text); line-height: 1.1; }
+.sectionLabel { font-size: 0.82rem; color: var(--text2); font-weight: 700; margin-top: 4px; }
+.actions      { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 
-.roundTitle {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(1.2rem, 4vw, 1.55rem);
-  color: var(--cyan);
-  line-height: 1;
+/* Not started */
+.notStarted     { min-height: calc(100vh - 74px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; padding: 24px; }
+.notStartedIcon { font-size: 3rem; }
+.notStartedText { color: var(--text2); font-size: 1rem; font-weight: 700; }
+
+/* ── End screen ── */
+.endWrap {
+  min-height: calc(100vh - 74px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px 48px;
 }
+.endCard {
+  background: var(--bg2);
+  border: 2px solid var(--gold);
+  border-radius: 24px;
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn { from{transform:scale(0.92);opacity:0;} to{transform:scale(1);opacity:1;} }
 
-.sectionLabel { font-size: 0.78rem; color: var(--text2); font-weight: 700; margin-top: 3px; }
-.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.endConfetti { font-size: 3rem; text-align: center; margin-bottom: 8px; }
+.endTitle    { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--gold); text-align: center; margin-bottom: 4px; }
+.endSub      { font-size: 0.8rem; font-weight: 700; color: var(--text2); text-align: center; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; }
 
-@media (max-width: 600px) {
-  .topBar { flex-direction: column; gap: 12px; }
-  .actions { width: 100%; justify-content: flex-start; }
+/* Podium */
+.podium {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.podiumSlot {
+  background: var(--surface);
+  border: 2px solid;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 120px;
+  flex: 1;
+  max-width: 170px;
+}
+.podiumFirst  { background: rgba(255,215,0,0.07); transform: scale(1.05); }
+.podiumMedal  { font-size: 2rem; }
+.podiumName   { font-weight: 900; font-size: 0.9rem; text-align: center; }
+.podiumScore  { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; line-height: 1; }
+
+/* Certificate list */
+.allTeams      { margin-bottom: 24px; }
+.allTeamsTitle { font-size: 0.76rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+
+.teamCertRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--surface);
+  border: 1.5px solid;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 7px;
+  transition: background 0.18s;
+}
+.teamCertRow:hover { background: var(--surface2); }
+.teamCertLeft  { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.teamCertPos   { font-size: 1.2rem; width: 26px; flex-shrink: 0; }
+.teamCertName  { font-weight: 900; font-size: 0.92rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.teamCertScore { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; flex-shrink: 0; }
+
+.endBtns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+@media (max-width: 480px) {
+  .endCard      { padding: 22px 14px; }
+  .podiumSlot   { min-width: 85px; padding: 10px 8px; }
+  .podiumFirst  { transform: none; }
+  .podiumName   { font-size: 0.78rem; }
+  .endBtns      { flex-direction: column; }
+  .teamCertRow  { flex-wrap: wrap; gap: 8px; }
 }
