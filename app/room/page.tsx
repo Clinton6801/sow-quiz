@@ -6,13 +6,13 @@ import {
   awardContestant, lockContestant,
   subscribeToRoom, subscribeToContestants,
   Room, Contestant, QuestionPayload
-} from '@/lib/rooms'
-import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS } from '@/lib/questions'
-import { upsertScore } from '@/lib/scores'
-import { useToast } from '@/context/ToastContext'
-import { useAdminAuth } from '@/hooks/useAdminAuth'
-import AdminGate from '@/components/ui/AdminGate'
-import { useSound } from '@/hooks/useSound'
+} from '../../lib/rooms'
+import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS, SECTION_META } from '../../lib/questions'
+import { upsertScore } from '../../lib/scores'
+import { useToast } from '../../context/ToastContext'
+import { useAdminAuth } from '../../hooks/useAdminAuth'
+import AdminGate from '../../components/ui/AdminGate'
+import { useSound } from '../../hooks/useSound'
 import styles from './page.module.css'
 
 const ALL_CATS = ['Maths', 'Spelling Bee', 'General Knowledge']
