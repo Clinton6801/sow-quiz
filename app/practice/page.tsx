@@ -1,8 +1,8 @@
 'use client'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { SECTIONS, CATEGORIES, CATEGORY_ICONS, Section, Category } from '../../lib/questions'
-import { getPracticeQuestions, PracticeQuestion } from '../../lib/practice'
+import { SECTIONS, CATEGORIES, CATEGORY_ICONS, Section, Category } from '@/lib/questions'
+import { getPracticeQuestions, PracticeQuestion } from '@/lib/practice'
 import styles from './page.module.css'
 
 type Stage = 'setup' | 'quiz' | 'results'
