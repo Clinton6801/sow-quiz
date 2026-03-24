@@ -2,51 +2,50 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useGame } from '@/context/GameContext'
-import { QUIZ_SECTIONS, SPELLING_SECTIONS, SECTIONS, SPELLING_SECTION_META, SpellingSection } from '@/lib/questions'
+import { SECTIONS, SECTION_META, Section } from '@/lib/questions'
 import { Team, Round } from '@/lib/types'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
 import AdminGate from '@/components/ui/AdminGate'
 import styles from './page.module.css'
-
+ 
 const DEFAULT_TEAMS: Team[] = [
   { name: 'Team Red',  color: '#C8102E' },
   { name: 'Team Blue', color: '#003580' },
   { name: 'Team Gold', color: '#B8860B' },
 ]
-
+ 
 function SetupForm() {
   const router = useRouter()
   const params = useSearchParams()
   const { startGame } = useGame()
   const { authed, checked, login } = useAdminAuth()
-
+ 
   const [showGate,   setShowGate]  = useState(false)
-  const [section,    setSection]   = useState(SECTIONS[0])
+  const [section,    setSection]   = useState<Section>(SECTIONS[0])
   const [round,      setRound]     = useState<Round>('round1')
   const [pointsPerQ, setPoints]    = useState(10)
   const [teams,      setTeams]     = useState<Team[]>(DEFAULT_TEAMS)
-
+ 
   useEffect(() => {
     const s = params.get('section')
-    if (s && SECTIONS.includes(s as typeof SECTIONS[number])) setSection(s as typeof SECTIONS[number])
+    if (s && SECTIONS.includes(s as Section)) setSection(s as Section)
   }, [params])
-
+ 
   const updateTeam = (i: number, key: keyof Team, val: string) =>
     setTeams(prev => prev.map((t, idx) => idx === i ? { ...t, [key]: val } : t))
-
+ 
   const handleStartClick = () => {
     if (authed) { doStart() } else { setShowGate(true) }
   }
-
+ 
   const doStart = () => {
     startGame({ section, round, pointsPerQ: Number(pointsPerQ) || 10, teams })
     router.push('/quiz')
   }
-
-  const isSpelling = SPELLING_SECTIONS.includes(section as SpellingSection)
-
+ 
+ 
   if (!checked) return null
-
+ 
   return (
     <div className="page" style={{ maxWidth: 680 }}>
       {showGate && (
@@ -57,32 +56,23 @@ function SetupForm() {
           onCancel={() => setShowGate(false)}
         />
       )}
-
+ 
       <h1 className={styles.title}>🏆 Game Setup</h1>
-
+ 
       <div className="card">
         <div className="form-row" style={{ marginBottom: 22 }}>
-
+ 
           {/* Section picker */}
           <div className="form-group">
             <label className="form-label">Grade Section</label>
-            <select value={section} onChange={e => setSection(e.target.value as typeof SECTIONS[number])}>
-              <optgroup label="── Quiz Sections ──">
-                {QUIZ_SECTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-              </optgroup>
-              <optgroup label="── 🐝 Spelling Bee Categories ──">
-                {SPELLING_SECTIONS.map(s => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </optgroup>
-            </select>
-            {isSpelling && (
-              <p className={styles.sectionMeta}>
-                {SPELLING_SECTION_META[section as SpellingSection].ages} · {SPELLING_SECTION_META[section as SpellingSection].grades}
-              </p>
-            )}
+            <select value={section} onChange={e => setSection(e.target.value as Section)}>
+            {SECTIONS.map(s => (
+              <option key={s} value={s}>{SECTION_META[s].icon} {SECTION_META[s].label} ({s})</option>
+            ))}
+          </select>
+          <p className={styles.sectionMeta}>{SECTION_META[section as Section]?.sub}</p>
           </div>
-
+ 
           <div className="form-group">
             <label className="form-label">Round Type</label>
             <select value={round} onChange={e => setRound(e.target.value as Round)}>
@@ -90,14 +80,14 @@ function SetupForm() {
               <option value="round2">Round 2 — Fastest Fingers</option>
             </select>
           </div>
-
+ 
           <div className="form-group" style={{ maxWidth: 130 }}>
             <label className="form-label">Points / Q</label>
             <input type="number" min={1} max={100} value={pointsPerQ}
               onChange={e => setPoints(Number(e.target.value))} />
           </div>
         </div>
-
+ 
         {/* Teams */}
         <p className="form-label" style={{ marginBottom: 12 }}>Team Names & Colours</p>
         <div className={styles.teams}>
@@ -112,7 +102,7 @@ function SetupForm() {
             </div>
           ))}
         </div>
-
+ 
         <div className={styles.startRow}>
           <button className="btn btn-primary btn-lg" onClick={handleStartClick}>
             🚀 Start Quiz
@@ -123,7 +113,7 @@ function SetupForm() {
     </div>
   )
 }
-
+ 
 export default function SetupPage() {
   return (
     <Suspense fallback={<div className="page" style={{ color: 'var(--text2)' }}>Loading…</div>}>

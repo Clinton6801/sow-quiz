@@ -2,13 +2,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
   getQuestions, addQuestion, deleteQuestion,
-  SECTIONS, CATEGORIES, CATEGORY_ICONS, Question, Section, Category
-} from '@/lib/questions'
+  SECTIONS, SECTION_META, CATEGORIES, CATEGORY_ICONS, Question, Section, Category
+} from '../../lib/questions'
 import {
   getPracticeQuestions, addPracticeQuestion, deletePracticeQuestion,
   PracticeQuestion
-} from '@/lib/practice'
-import { useToast } from '@/context/ToastContext'
+} from '../../lib/practice'
+import { useToast } from '../../context/ToastContext'
 import styles from './page.module.css'
 
 const ADMIN_PASSWORD = 'sow2025'

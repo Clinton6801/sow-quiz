@@ -1,28 +1,26 @@
 import { supabase } from './supabase'
 
-// ── Standard quiz sections ──
-export const QUIZ_SECTIONS = [
-  'Lower Primary',
-  'Upper Primary',
-  'Junior Secondary',
-  'Senior Secondary',
+// ── Single unified set of sections (matches the home page cards) ──
+export const SECTIONS = [
+  'Sprout 2/3',
+  'Stepping Stone & Grade 1',
+  'Grade 2/3',
+  'Grade 4/5',
+  'JSS 1–3',
+  'SS 1–2',
 ] as const
-export type QuizSection = typeof QUIZ_SECTIONS[number]
 
-// ── Spelling Bee age categories ──
-export const SPELLING_SECTIONS = [
-  'Little Word Sprouts',       // Ages 3–4  (Sprout 2/3)
-  'Rising Word Explorers',     // Ages 5–6  (Stepping Stone & Grade 1)
-  'Word Builders League',      // Ages 7–8  (Grade 2/3)
-  'Word Champions Circle',     // Ages 9–10 (Grade 4/5)
-  'Elite Word Masters',        // Ages 11–13 (JSS 1–3)
-  'Grand Spelling Legends',    // Ages 14–15 (SSS 1–2)
-] as const
-export type SpellingSection = typeof SPELLING_SECTIONS[number]
-
-// ── All sections combined ──
-export const SECTIONS = [...QUIZ_SECTIONS, ...SPELLING_SECTIONS] as const
 export type Section = typeof SECTIONS[number]
+
+// ── Section metadata (for display) ──
+export const SECTION_META: Record<Section, { label: string; sub: string; icon: string }> = {
+  'Sprout 2/3':                { label: 'Sprout',          sub: 'Sprout 2/3',               icon: '🌱' },
+  'Stepping Stone & Grade 1':  { label: 'Stepping Stone',  sub: 'Stepping Stone & Grade 1', icon: '🪴' },
+  'Grade 2/3':                 { label: 'Grade 2/3',       sub: 'Grade 2/3',                icon: '📗' },
+  'Grade 4/5':                 { label: 'Grade 4/5',       sub: 'Grade 4/5',                icon: '📘' },
+  'JSS 1–3':                   { label: 'JSS 1–3',         sub: 'JSS 1–3',                  icon: '🎓' },
+  'SS 1–2':                    { label: 'SS 1–2',          sub: 'SS 1–2',                   icon: '🏫' },
+}
 
 // ── Categories ──
 export const CATEGORIES = ['Maths', 'Spelling Bee', 'General Knowledge'] as const
@@ -32,16 +30,6 @@ export const CATEGORY_ICONS: Record<Category, string> = {
   'Maths':             '📐',
   'Spelling Bee':      '🐝',
   'General Knowledge': '🌍',
-}
-
-// ── Spelling section metadata ──
-export const SPELLING_SECTION_META: Record<SpellingSection, { ages: string; grades: string }> = {
-  'Little Word Sprouts':    { ages: 'Ages 3–4',  grades: 'Sprout 2/3' },
-  'Rising Word Explorers':  { ages: 'Ages 5–6',  grades: 'Stepping Stone & Grade 1' },
-  'Word Builders League':   { ages: 'Ages 7–8',  grades: 'Grade 2/3' },
-  'Word Champions Circle':  { ages: 'Ages 9–10', grades: 'Grade 4/5' },
-  'Elite Word Masters':     { ages: 'Ages 11–13', grades: 'JSS 1–3' },
-  'Grand Spelling Legends': { ages: 'Ages 14–15', grades: 'SSS 1–2' },
 }
 
 export interface Question {

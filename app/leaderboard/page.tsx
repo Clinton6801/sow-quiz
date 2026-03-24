@@ -7,9 +7,7 @@ import AdminGate from '@/components/ui/AdminGate'
 import LeaderboardTable from '@/components/leaderboard/LeaderboardTable'
 import styles from './page.module.css'
 
-const SECTION_FILTERS = ['All', 'Lower Primary', 'Upper Primary', 'Junior Secondary', 'Senior Secondary',
-  'Little Word Sprouts', 'Rising Word Explorers', 'Word Builders League',
-  'Word Champions Circle', 'Elite Word Masters', 'Grand Spelling Legends']
+const SECTION_FILTERS = ['All', 'Sprout 2/3', 'Stepping Stone & Grade 1', 'Grade 2/3', 'Grade 4/5', 'JSS 1–3', 'SS 1–2']
 
 const TIME_FILTERS = [
   { label: 'All Time', value: 'all' },

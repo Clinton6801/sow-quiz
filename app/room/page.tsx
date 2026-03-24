@@ -197,12 +197,9 @@ export default function RoomPage() {
         <div className="form-group" style={{ marginBottom: 14 }}>
           <label className="form-label">Grade Section</label>
           <select value={section} onChange={e => setSection(e.target.value as Section)}>
-            <optgroup label="── Quiz Sections ──">
-              {QUIZ_SECTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-            </optgroup>
-            <optgroup label="── 🐝 Spelling Bee ──">
-              {SPELLING_SECTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-            </optgroup>
+            {SECTIONS.map(s => (
+              <option key={s} value={s}>{SECTION_META[s]?.icon} {SECTION_META[s]?.label} ({s})</option>
+            ))}
           </select>
         </div>
 
