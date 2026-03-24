@@ -1,11 +1,11 @@
 'use client'
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useGame } from '@/context/GameContext'
-import { SECTIONS, SECTION_META, Section } from '@/lib/questions'
-import { Team, Round } from '@/lib/types'
-import { useAdminAuth } from '@/hooks/useAdminAuth'
-import AdminGate from '@/components/ui/AdminGate'
+import { useGame } from '../../context/GameContext'
+import { SECTIONS, SECTION_META, Section } from '../../lib/questions'
+import { Team, Round } from '../../lib/types'
+import { useAdminAuth } from '../../hooks/useAdminAuth'
+import AdminGate from '../../components/ui/AdminGate'
 import styles from './page.module.css'
  
 const DEFAULT_TEAMS: Team[] = [
