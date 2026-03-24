@@ -1,10 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { getLeaderboard, resetLeaderboard, LeaderboardEntry } from '@/lib/scores'
-import { useToast } from '@/context/ToastContext'
-import { useAdminAuth } from '@/hooks/useAdminAuth'
-import AdminGate from '@/components/ui/AdminGate'
-import LeaderboardTable from '@/components/leaderboard/LeaderboardTable'
+import { getLeaderboard, resetLeaderboard, LeaderboardEntry } from '../../lib/scores'
+import { useToast } from '../../context/ToastContext'
+import { useAdminAuth } from '../../hooks/useAdminAuth'
+import AdminGate from '../../components/ui/AdminGate'
+import LeaderboardTable from '../../components/leaderboard/LeaderboardTable'
 import styles from './page.module.css'
 
 const SECTION_FILTERS = ['All', 'Sprout 2/3', 'Stepping Stone & Grade 1', 'Grade 2/3', 'Grade 4/5', 'JSS 1–3', 'SS 1–2']
