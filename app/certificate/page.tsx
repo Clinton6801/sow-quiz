@@ -41,7 +41,7 @@ function CertContent() {
         width: 900,
         height: certRef.current.offsetHeight,
         windowWidth: 900,
-      })
+      } as any )
       const link = document.createElement('a')
       link.download = `SOW-Certificate-${winner.replace(/\s+/g, '-')}.png`
       link.href = canvas.toDataURL('image/png')
