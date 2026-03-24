@@ -136,7 +136,8 @@
   font-size: 1.35rem; cursor: pointer; transition: all 0.15s;
 }
 .qBtn:hover  { background: var(--gold); color: var(--bg); border-color: var(--gold); transform: scale(1.08); }
-.qBtn.qActive {
+.qBtn.qActive,
+.qBtn:disabled {
   background: var(--surface2);
   border-color: var(--border);
   color: transparent;
@@ -144,7 +145,7 @@
   filter: blur(1.5px);
   pointer-events: none;
   transform: scale(0.9);
-  cursor: default;
+  cursor: not-allowed;
 }
 
 @media (max-width: 480px) {

@@ -6,11 +6,13 @@ import {
   awardContestant, lockContestant,
   subscribeToRoom, subscribeToContestants,
   Room, Contestant, QuestionPayload
-} from '../../lib/rooms'
-import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS } from '../../lib/questions'
-import { upsertScore } from '../../lib/scores'
-import { useToast } from '../../context/ToastContext'
-import { useSound } from '../../hooks/useSound'
+} from '@/lib/rooms'
+import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS } from '@/lib/questions'
+import { upsertScore } from '@/lib/scores'
+import { useToast } from '@/context/ToastContext'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import AdminGate from '@/components/ui/AdminGate'
+import { useSound } from '@/hooks/useSound'
 import styles from './page.module.css'
 
 const ALL_CATS = ['Maths', 'Spelling Bee', 'General Knowledge']
@@ -26,6 +28,8 @@ export default function RoomPage() {
   const router = useRouter()
   const { showToast } = useToast()
   const { play } = useSound()
+  const { authed } = useAdminAuth()
+  const [showGate, setShowGate] = useState(false)
 
   // Setup
   const [step,        setStep]       = useState<'setup' | 'lobby' | 'game' | 'end'>('setup')
@@ -193,7 +197,12 @@ export default function RoomPage() {
         <div className="form-group" style={{ marginBottom: 14 }}>
           <label className="form-label">Grade Section</label>
           <select value={section} onChange={e => setSection(e.target.value as Section)}>
-            {SECTIONS.map(s => <option key={s}>{s}</option>)}
+            <optgroup label="── Quiz Sections ──">
+              {QUIZ_SECTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+            </optgroup>
+            <optgroup label="── 🐝 Spelling Bee ──">
+              {SPELLING_SECTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+            </optgroup>
           </select>
         </div>
 
@@ -221,7 +230,15 @@ export default function RoomPage() {
           </div>
         </div>
 
-        <button className="btn btn-primary btn-lg" onClick={handleCreate} disabled={creating}
+        {showGate && (
+          <AdminGate
+            title="Host Access Required"
+            subtitle="Enter the admin password to create a room"
+            onAuthed={() => { setShowGate(false); handleCreate() }}
+            onCancel={() => setShowGate(false)}
+          />
+        )}
+        <button className="btn btn-primary btn-lg" onClick={authed ? handleCreate : () => setShowGate(true)} disabled={creating}
           style={{ width: '100%', justifyContent: 'center' }}>
           {creating ? 'Creating…' : '🚀 Create Room'}
         </button>
