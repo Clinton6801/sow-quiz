@@ -6,9 +6,9 @@ const SECTIONS = [
   { name: 'Sprout',    grades: ' Sprout 2–3',   icon: '🌱' },
   { name: 'Stepping Stone',    grades: 'Stepping Stone-Grade 1',   icon: '🌱' },
   { name: 'Lower Primary',    grades: 'Grade 2–3',   icon: '🌱' },
-  { name: 'Upper Primary',    grades: 'Grade 4–6',   icon: '📚' },
-  { name: 'Junior Secondary', grades: 'Grade 7–9',   icon: '🔬' },
-  { name: 'Senior Secondary', grades: 'Grade 10–12', icon: '🎓' },
+  { name: 'Upper Primary',    grades: 'Grade 4–5',   icon: '📚' },
+  { name: 'Junior Secondary', grades: 'JSSS1 - JSSS3',   icon: '🔬' },
+  { name: 'Senior Secondary', grades: 'SSS1 - SSS2', icon: '🎓' },
 ]
 
 export default function HomePage() {
