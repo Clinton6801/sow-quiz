@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
   getQuestions, addQuestion, deleteQuestion,
-  SECTIONS, SECTION_META, CATEGORIES, CATEGORY_ICONS, Question, Section, Category
+  SECTIONS, CATEGORIES, CATEGORY_ICONS, Question, Section, Category
 } from '../../lib/questions'
 import {
   getPracticeQuestions, addPracticeQuestion, deletePracticeQuestion,

@@ -1,28 +1,16 @@
 import { supabase } from './supabase'
 
-// ── Single unified set of sections (matches the home page cards) ──
 export const SECTIONS = [
-  'Sprout 2/3',
-  'Stepping Stone & Grade 1',
-  'Grade 2/3',
-  'Grade 4/5',
-  'JSS 1–3',
-  'SS 1–2',
+  'Little Sprouts',
+  'Rising Explorers',
+  'Builders League',
+  'Champions Circle',
+  'Elite Masters',
+  'Grand Legends',
 ] as const
 
 export type Section = typeof SECTIONS[number]
 
-// ── Section metadata (for display) ──
-export const SECTION_META: Record<Section, { label: string; sub: string; icon: string }> = {
-  'Sprout 2/3':                { label: 'Sprout',          sub: 'Sprout 2/3',               icon: '🌱' },
-  'Stepping Stone & Grade 1':  { label: 'Stepping Stone',  sub: 'Stepping Stone & Grade 1', icon: '🪴' },
-  'Grade 2/3':                 { label: 'Grade 2/3',       sub: 'Grade 2/3',                icon: '📗' },
-  'Grade 4/5':                 { label: 'Grade 4/5',       sub: 'Grade 4/5',                icon: '📘' },
-  'JSS 1–3':                   { label: 'JSS 1–3',         sub: 'JSS 1–3',                  icon: '🎓' },
-  'SS 1–2':                    { label: 'SS 1–2',          sub: 'SS 1–2',                   icon: '🏫' },
-}
-
-// ── Categories ──
 export const CATEGORIES = ['Maths', 'Spelling Bee', 'General Knowledge'] as const
 export type Category = typeof CATEGORIES[number]
 

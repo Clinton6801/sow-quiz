@@ -3,12 +3,12 @@ import Link from 'next/link'
 import styles from './page.module.css'
 
 const SECTIONS = [
-  { name: 'Sprout',    grades: ' Sprout 2–3',   icon: '🌱' },
-  { name: 'Stepping Stone',    grades: 'Stepping Stone-Grade 1',   icon: '🌱' },
-  { name: 'Lower Primary',    grades: 'Grade 2–3',   icon: '🌱' },
-  { name: 'Upper Primary',    grades: 'Grade 4–5',   icon: '📚' },
-  { name: 'Junior Secondary', grades: 'JSSS1 - JSSS3',   icon: '🔬' },
-  { name: 'Senior Secondary', grades: 'SSS1 - SSS2', icon: '🎓' },
+  { name: 'Little word Sprouts',    grades: ' Sprout 2–3',   icon: '🌱' },
+  { name: 'Rising Word Explorers',    grades: 'Stepping Stone-Grade 1',   icon: '🌿' },
+  { name: 'Word Builders League',    grades: 'Grade 2–3',   icon: '🌳' },
+  { name: 'Word Champions Circle',    grades: 'Grade 4–5',   icon: '🌟' },
+  { name: 'Elite Word Masters', grades: 'JSSS1 - JSSS3',   icon: '🧠' },
+  { name: 'Grand Spelling Legends', grades: 'SSS1 - SSS2', icon: '👑' },
 ]
 
 export default function HomePage() {

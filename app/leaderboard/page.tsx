@@ -7,7 +7,7 @@ import AdminGate from '../../components/ui/AdminGate'
 import LeaderboardTable from '../../components/leaderboard/LeaderboardTable'
 import styles from './page.module.css'
 
-const SECTION_FILTERS = ['All', 'Sprout 2/3', 'Stepping Stone & Grade 1', 'Grade 2/3', 'Grade 4/5', 'JSS 1–3', 'SS 1–2']
+const SECTION_FILTERS = ['All', 'Little Sprouts', 'Rising Explorers', 'Builders League', 'Champions Circle', 'Elite Masters', 'Grand Legends']
 
 const TIME_FILTERS = [
   { label: 'All Time', value: 'all' },

@@ -7,7 +7,7 @@ import {
   subscribeToRoom, subscribeToContestants,
   Room, Contestant, QuestionPayload
 } from '../../lib/rooms'
-import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS, SECTION_META } from '../../lib/questions'
+import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS } from '../../lib/questions'
 import { upsertScore } from '../../lib/scores'
 import { useToast } from '../../context/ToastContext'
 import { useAdminAuth } from '../../hooks/useAdminAuth'
@@ -198,7 +198,7 @@ export default function RoomPage() {
           <label className="form-label">Grade Section</label>
           <select value={section} onChange={e => setSection(e.target.value as Section)}>
             {SECTIONS.map(s => (
-              <option key={s} value={s}>{SECTION_META[s]?.icon} {SECTION_META[s]?.label} ({s})</option>
+              <option key={s} value={s}>{s}</option>
             ))}
           </select>
         </div>
