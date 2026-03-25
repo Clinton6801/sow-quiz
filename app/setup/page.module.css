@@ -1,8 +1,179 @@
-.title       { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 6vw, 2.2rem); color: var(--gold); margin-bottom: 20px; }
-.teams       { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-.teamRow     { display: flex; align-items: center; gap: 10px; }
-.dot         { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; }
-.colorPicker { width: 38px; height: 38px; border: none; background: none; cursor: pointer; padding: 0; border-radius: 8px; }
-.sectionMeta { font-size: 0.74rem; color: var(--cyan); font-weight: 700; margin-top: 5px; }
-.startRow    { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
-.lockNote    { font-size: 0.76rem; color: var(--text2); }
+.title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 6vw, 2.2rem); color: var(--gold); margin-bottom: 20px; }
+
+/* ── Participants header ── */
+.teamsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.teamCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  font-family: 'Nunito', sans-serif;
+}
+.addBtn {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 2px solid var(--green);
+  background: rgba(0,200,83,0.08);
+  color: var(--green);
+  font-weight: 800;
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.addBtn:hover:not(:disabled) { background: var(--green); color: var(--bg); }
+.addBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Team list ── */
+.teams { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+
+.teamRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 12px;
+  position: relative;
+  transition: border-color 0.18s;
+  flex-wrap: wrap;
+}
+.teamRow:hover { border-color: var(--border2); }
+
+.teamNum {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  color: var(--text2);
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Colour swatch button */
+.swatchBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.swatchBtn:hover { transform: scale(1.15); box-shadow: 0 0 0 3px rgba(255,255,255,0.2); }
+
+/* Name input */
+.nameInput {
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--border2);
+  border-radius: 0;
+  padding: 4px 2px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.18s;
+  font-family: 'Nunito', sans-serif;
+}
+.nameInput:focus { border-bottom-color: var(--cyan); }
+.nameInput::placeholder { color: var(--text2); font-weight: 400; }
+
+/* Remove button */
+.removeBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  color: var(--text2);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.removeBtn:hover:not(:disabled) { border-color: var(--danger); color: var(--danger); background: rgba(255,23,68,0.08); }
+.removeBtn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+/* ── Colour picker dropdown ── */
+.colorDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 100;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  min-width: 220px;
+  animation: dropIn 0.18s ease;
+}
+@keyframes dropIn { from{transform:translateY(-6px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+
+.colorDropdownLabel { font-size: 0.72rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.colorDot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.colorDot:hover { transform: scale(1.2); }
+.colorDotActive { border-color: #fff; box-shadow: 0 0 0 2px var(--cyan); transform: scale(1.15); }
+
+.customColorRow  { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.customColorLabel { font-size: 0.76rem; color: var(--text2); font-weight: 700; }
+.colorPicker     { width: 36px; height: 36px; border: none; background: none; cursor: pointer; padding: 0; border-radius: 8px; }
+
+/* ── Add bottom button ── */
+.addBtnBottom {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px dashed var(--border2);
+  background: transparent;
+  color: var(--text2);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  margin-bottom: 20px;
+}
+.addBtnBottom:hover { border-color: var(--green); color: var(--green); background: rgba(0,200,83,0.06); }
+
+/* ── Start row ── */
+.startRow { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+.lockNote { font-size: 0.76rem; color: var(--text2); }
+
+@media (max-width: 480px) {
+  .colorDropdown { left: 0; right: 0; min-width: unset; }
+  .colorGrid { grid-template-columns: repeat(6, 1fr); }
+}
