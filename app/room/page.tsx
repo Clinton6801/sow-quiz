@@ -6,13 +6,13 @@ import {
   awardContestant, lockContestant,
   subscribeToRoom, subscribeToContestants,
   Room, Contestant, QuestionPayload
-} from '../../lib/rooms'
-import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS } from '../../lib/questions'
-import { upsertScore } from '../../lib/scores'
-import { useToast } from '../../context/ToastContext'
-import { useAdminAuth } from '../../hooks/useAdminAuth'
-import AdminGate from '../../components/ui/AdminGate'
-import { useSound } from '../../hooks/useSound'
+} from '@/lib/rooms'
+import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question, Category, Section, SECTIONS } from '@/lib/questions'
+import { upsertScore } from '@/lib/scores'
+import { useToast } from '@/context/ToastContext'
+import { useAdminAuth } from '@/hooks/useAdminAuth'
+import AdminGate from '@/components/ui/AdminGate'
+import { useSound } from '@/hooks/useSound'
 import styles from './page.module.css'
 
 const ALL_CATS = ['Maths', 'Spelling Bee', 'General Knowledge']
@@ -48,6 +48,7 @@ export default function RoomPage() {
   const [grouped,    setGrouped]    = useState<Record<string, Question[]>>({})
   const [activeQ,    setActiveQ]    = useState<Question | null>(null)
   const [usedIds,    setUsedIds]    = useState<Set<string>>(new Set())
+  const [hoverQ,     setHoverQ]     = useState<string | null>(null)  // question id being hovered
   const [revealed,   setRevealed]   = useState(false)
   const [loadingQs,  setLoadingQs]  = useState(false)
   const [timeLeft,   setTimeLeft]   = useState<number | null>(null)
@@ -130,6 +131,14 @@ export default function RoomPage() {
       buzzed_by: null,
       timer_started_at: new Date().toISOString(),
     })
+  }
+
+  const handleRandom = async () => {
+    const allQs = Object.values(grouped).flat()
+    const available = allQs.filter(q => !usedIds.has(q.id))
+    if (available.length === 0) { showToast('All questions have been used!', 'info'); return }
+    const pick = available[Math.floor(Math.random() * available.length)]
+    await pushQuestion(pick)
   }
 
   const handleReveal = async () => {
@@ -291,6 +300,9 @@ export default function RoomPage() {
             onClick={toggleDouble} title="Toggle double points">
             {room.double_points ? '🔥 2✕ ON' : '2✕ Double'}
           </button>
+          <button className="btn btn-ghost btn-sm" onClick={handleRandom} title="Pick random unpicked question">
+            🎲 Random
+          </button>
           <button className="btn btn-danger btn-sm" onClick={handleEnd}>End Game</button>
         </div>
       </div>
@@ -360,10 +372,18 @@ export default function RoomPage() {
             <div className={styles.qGrid}>
               {(grouped[cat] || []).map((q, i) => (
                 <button key={q.id}
-                  className={`${styles.qBtn} ${usedIds.has(q.id) ? styles.qActive : ''}`}
+                  className={`${styles.qBtn} ${usedIds.has(q.id) ? styles.qActive : ''} ${hoverQ === q.id ? styles.qHovered : ''}`}
                   onClick={() => pushQuestion(q)}
-                  disabled={usedIds.has(q.id)}>
+                  disabled={usedIds.has(q.id)}
+                  onMouseEnter={() => setHoverQ(q.id)}
+                  onMouseLeave={() => setHoverQ(null)}>
                   {i + 1}
+                  {hoverQ === q.id && !usedIds.has(q.id) && (
+                    <div className={styles.qTooltip}>
+                      <p className={styles.qTooltipText}>{q.question}</p>
+                      <p className={styles.qTooltipAns}>✓ {q.answer}</p>
+                    </div>
+                  )}
                 </button>
               ))}
             </div>

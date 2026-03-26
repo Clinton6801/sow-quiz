@@ -4,9 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import styles from './page.module.css'
 
 const POSITION_COLORS: Record<string, string> = {
-  '1st Place': '#FFD700',
-  '2nd Place': '#C0C0C0',
-  '3rd Place': '#CD7F32',
+  '1st Place': '#FFD700', '2nd Place': '#C0C0C0', '3rd Place': '#CD7F32',
 }
 const POSITION_MEDALS: Record<string, string> = {
   '1st Place': '🥇', '2nd Place': '🥈', '3rd Place': '🥉',
@@ -24,6 +22,7 @@ function CertContent() {
   const category = params.get('category') ?? 'Quiz Championship'
   const position = params.get('position') ?? ''
   const date     = params.get('date')     ?? new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  const photo    = params.get('photo')    ?? ''   // base64 data URL
 
   const posColor = POSITION_COLORS[position] ?? '#003580'
   const posMedal = POSITION_MEDALS[position] ?? '🏅'
@@ -32,26 +31,18 @@ function CertContent() {
     if (!certRef.current) return
     setDownloading(true)
     try {
-      // Dynamically import html2canvas so it only loads when needed
       const html2canvas = (await import('html2canvas')).default
       const canvas = await html2canvas(certRef.current, {
-        scale: 3,           // 3x resolution = crisp on all screens
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        width: 900,
-        height: certRef.current.offsetHeight,
-        windowWidth: 900,
-      } as any )
+        scale: 3, useCORS: true, backgroundColor: '#ffffff',
+        width: 900, height: certRef.current.offsetHeight, windowWidth: 900,
+      })
       const link = document.createElement('a')
       link.download = `SOW-Certificate-${winner.replace(/\s+/g, '-')}.png`
       link.href = canvas.toDataURL('image/png')
       link.click()
     } catch (e) {
       alert('Could not generate image. Please try again.')
-      console.error(e)
-    } finally {
-      setDownloading(false)
-    }
+    } finally { setDownloading(false) }
   }
 
   return (
@@ -63,7 +54,6 @@ function CertContent() {
         </button>
       </div>
 
-      {/* Fixed 900px wide cert — same on every device */}
       <div className={styles.certOuter}>
         <div className={styles.cert} ref={certRef}>
           <div className={styles.outerBorder}>
@@ -75,6 +65,7 @@ function CertContent() {
                 <div className={styles.decoLine} />
               </div>
 
+              {/* Header */}
               <div className={styles.certHeader}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/logo.jpeg" alt="SOW" className={styles.logo} />
@@ -91,6 +82,14 @@ function CertContent() {
               <p className={styles.certOfAchievement}>Certificate of Achievement</p>
               <p className={styles.certSub}>{category}{section ? ` — ${section}` : ''}</p>
               <p className={styles.thisIs}>This is to certify that</p>
+
+              {/* Participant photo — centered above name */}
+              {photo && (
+                <div className={styles.photoWrap}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo} alt={winner} className={styles.participantPhoto} />
+                </div>
+              )}
 
               <div className={styles.winnerBox}>
                 <p className={styles.winnerName}>{winner}</p>
@@ -129,15 +128,11 @@ function CertContent() {
                 </div>
               </div>
 
-              <div className={styles.bottomDeco}>
-                <span>✦ &nbsp; ✦ &nbsp; ✦ &nbsp; ✦ &nbsp; ✦</span>
-              </div>
-
+              <div className={styles.bottomDeco}><span>✦ &nbsp; ✦ &nbsp; ✦ &nbsp; ✦ &nbsp; ✦</span></div>
             </div>
           </div>
         </div>
       </div>
-
       <p className={styles.hint}>The image will always be the same size regardless of your device</p>
     </div>
   )

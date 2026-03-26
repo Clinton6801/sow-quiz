@@ -103,3 +103,19 @@
 .dateBox    { flex: 1; text-align: center; }
 .dateVal    { font-weight: 900; font-size: 0.95rem; color: #003580; margin: 0; }
 .dateLabel  { font-size: 0.65rem; color: #777; text-transform: uppercase; letter-spacing: 1px; margin: 2px 0 0; }
+
+/* Participant photo */
+.photoWrap {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 10px;
+}
+.participantPhoto {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #FFD700;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  display: block;
+}

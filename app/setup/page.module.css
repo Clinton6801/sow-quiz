@@ -1,179 +1,88 @@
 .title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 6vw, 2.2rem); color: var(--gold); margin-bottom: 20px; }
 
-/* ── Participants header ── */
-.teamsHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.teamCount {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text2);
-  font-size: 0.72rem;
-  font-weight: 900;
-  padding: 1px 8px;
-  border-radius: 999px;
-  margin-left: 8px;
-  font-family: 'Nunito', sans-serif;
-}
-.addBtn {
-  padding: 7px 16px;
-  border-radius: 999px;
-  border: 2px solid var(--green);
-  background: rgba(0,200,83,0.08);
-  color: var(--green);
-  font-weight: 800;
-  font-size: 0.84rem;
-  cursor: pointer;
-  transition: all 0.18s;
-  white-space: nowrap;
-}
+/* Teams header */
+.teamsHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+.teamCount   { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); color: var(--text2); font-size: 0.72rem; font-weight: 900; padding: 1px 8px; border-radius: 999px; margin-left: 8px; font-family: 'Nunito', sans-serif; }
+.addBtn      { padding: 7px 16px; border-radius: 999px; border: 2px solid var(--green); background: rgba(0,200,83,0.08); color: var(--green); font-weight: 800; font-size: 0.84rem; cursor: pointer; transition: all 0.18s; white-space: nowrap; }
 .addBtn:hover:not(:disabled) { background: var(--green); color: var(--bg); }
 .addBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ── Team list ── */
-.teams { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-
-.teamRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 8px 12px;
-  position: relative;
-  transition: border-color 0.18s;
-  flex-wrap: wrap;
-}
+/* Team rows */
+.teams   { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.teamRow { display: flex; align-items: center; gap: 9px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 12px; position: relative; flex-wrap: wrap; transition: border-color 0.18s; }
 .teamRow:hover { border-color: var(--border2); }
+.teamNum { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--text2); width: 18px; text-align: center; flex-shrink: 0; }
 
-.teamNum {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem;
-  color: var(--text2);
-  width: 20px;
-  text-align: center;
-  flex-shrink: 0;
+/* Photo thumbnail */
+.photoThumb {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid var(--border2); background: var(--surface2);
+  overflow: hidden; flex-shrink: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.18s, transform 0.15s;
+  padding: 0;
 }
+.photoThumb:hover { border-color: var(--cyan); transform: scale(1.1); }
+.photoImg         { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photoPlaceholder { font-size: 1rem; }
 
-/* Colour swatch button */
-.swatchBtn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.3);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-.swatchBtn:hover { transform: scale(1.15); box-shadow: 0 0 0 3px rgba(255,255,255,0.2); }
+/* Colour swatch */
+.swatchBtn { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.25); cursor: pointer; flex-shrink: 0; transition: transform 0.15s; }
+.swatchBtn:hover { transform: scale(1.15); }
 
 /* Name input */
-.nameInput {
-  flex: 1;
-  min-width: 120px;
-  background: transparent;
-  border: none;
-  border-bottom: 1.5px solid var(--border2);
-  border-radius: 0;
-  padding: 4px 2px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.18s;
-  font-family: 'Nunito', sans-serif;
-}
+.nameInput { flex: 1; min-width: 120px; background: transparent; border: none; border-bottom: 1.5px solid var(--border2); border-radius: 0; padding: 4px 2px; font-size: 0.95rem; font-weight: 700; color: var(--text); outline: none; transition: border-color 0.18s; font-family: 'Nunito', sans-serif; }
 .nameInput:focus { border-bottom-color: var(--cyan); }
 .nameInput::placeholder { color: var(--text2); font-weight: 400; }
 
-/* Remove button */
-.removeBtn {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border2);
-  background: transparent;
-  color: var(--text2);
-  font-size: 0.75rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s;
-}
+/* Remove */
+.removeBtn { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border2); background: transparent; color: var(--text2); font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
 .removeBtn:hover:not(:disabled) { border-color: var(--danger); color: var(--danger); background: rgba(255,23,68,0.08); }
 .removeBtn:disabled { opacity: 0.25; cursor: not-allowed; }
 
-/* ── Colour picker dropdown ── */
-.colorDropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 100;
-  background: var(--bg2);
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 14px 16px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-  min-width: 220px;
-  animation: dropIn 0.18s ease;
-}
+/* Colour dropdown */
+.colorDropdown      { position: absolute; top: calc(100% + 8px); left: 0; z-index: 200; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 16px; padding: 14px 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); min-width: 220px; animation: dropIn 0.18s ease; }
 @keyframes dropIn { from{transform:translateY(-6px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-
 .colorDropdownLabel { font-size: 0.72rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.colorGrid          { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 12px; }
+.colorDot           { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform 0.15s; }
+.colorDot:hover     { transform: scale(1.2); }
+.colorDotActive     { border-color: #fff; box-shadow: 0 0 0 2px var(--cyan); transform: scale(1.15); }
+.customColorRow     { display: flex; align-items: center; gap: 10px; }
+.customColorLabel   { font-size: 0.76rem; color: var(--text2); font-weight: 700; }
+.colorPicker        { width: 36px; height: 36px; border: none; background: none; cursor: pointer; padding: 0; border-radius: 8px; }
 
-.colorGrid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
-}
-.colorDot {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: transform 0.15s;
-}
-.colorDot:hover { transform: scale(1.2); }
-.colorDotActive { border-color: #fff; box-shadow: 0 0 0 2px var(--cyan); transform: scale(1.15); }
-
-.customColorRow  { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-.customColorLabel { font-size: 0.76rem; color: var(--text2); font-weight: 700; }
-.colorPicker     { width: 36px; height: 36px; border: none; background: none; cursor: pointer; padding: 0; border-radius: 8px; }
-
-/* ── Add bottom button ── */
-.addBtnBottom {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 2px dashed var(--border2);
-  background: transparent;
-  color: var(--text2);
-  font-weight: 700;
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: all 0.18s;
-  margin-bottom: 20px;
-}
+/* Add bottom button */
+.addBtnBottom { width: 100%; padding: 10px; border-radius: 10px; border: 2px dashed var(--border2); background: transparent; color: var(--text2); font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: all 0.18s; margin-bottom: 20px; }
 .addBtnBottom:hover { border-color: var(--green); color: var(--green); background: rgba(0,200,83,0.06); }
 
-/* ── Start row ── */
+/* Start row */
 .startRow { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
 .lockNote { font-size: 0.76rem; color: var(--text2); }
 
+/* Photo modal */
+.modalOverlay  { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 24px; animation: fadeIn 0.18s ease; }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.photoModal    { background: var(--bg2); border: 2px solid var(--cyan); border-radius: 24px; padding: 32px 28px; width: 100%; max-width: 400px; position: relative; animation: popIn 0.22s ease; }
+@keyframes popIn { from{transform:scale(0.88);opacity:0;} to{transform:scale(1);opacity:1;} }
+.photoModalTitle { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--cyan); margin-bottom: 20px; text-align: center; }
+.modalClose    { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 1.2rem; color: var(--text2); cursor: pointer; }
+
+.photoOptions  { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.photoOptBtn   { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 32px; border: 2px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); font-weight: 700; font-size: 0.9rem; cursor: pointer; width: 100%; transition: all 0.18s; }
+.photoOptBtn:hover { border-color: var(--cyan); background: rgba(0,229,255,0.06); color: var(--cyan); }
+.photoOptIcon  { font-size: 2.2rem; }
+.photoOptOr    { font-size: 0.8rem; color: var(--text2); font-weight: 700; }
+
+.videoWrap     { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.video         { width: 100%; border-radius: 12px; background: #000; max-height: 260px; }
+.camError      { color: var(--danger); font-size: 0.84rem; text-align: center; margin-top: 8px; }
+
+.previewWrap   { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.previewImg    { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid var(--cyan); }
+.previewBtns   { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
 @media (max-width: 480px) {
+  .teamRow { padding: 8px; gap: 7px; }
   .colorDropdown { left: 0; right: 0; min-width: unset; }
-  .colorGrid { grid-template-columns: repeat(6, 1fr); }
 }

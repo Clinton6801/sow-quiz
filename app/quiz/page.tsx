@@ -25,23 +25,21 @@ export default function QuizPage() {
   }
 
   // Sort teams by score
-  const sorted = [...(game.teams ?? [])].sort((a, b) => {
-    const scoreA = typeof (a as any).score === 'number' ? (a as any).score : 0
-    const scoreB = typeof (b as any).score === 'number' ? (b as any).score : 0
-    return scoreB - scoreA
-  })
+  const sorted = [...(game.teams ?? [])].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
   const date   = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
   const handleCertificate = (team: typeof sorted[0], position: number) => {
     const posLabel = position === 1 ? '1st Place' : position === 2 ? '2nd Place' : position === 3 ? '3rd Place' : `${position}th Place`
+    const photoParam = team.photo ? `&photo=${encodeURIComponent(team.photo)}` : ''
     router.push(
       `/certificate?` +
       `winner=${encodeURIComponent(team.name)}&` +
-      `score=${(team as any).score ?? 0}&` +
+      `score=${team.score ?? 0}&` +
       `section=${encodeURIComponent(game.section ?? '')}&` +
       `category=Quiz Championship&` +
       `position=${encodeURIComponent(posLabel)}&` +
-      `date=${encodeURIComponent(date)}`
+      `date=${encodeURIComponent(date)}` +
+      photoParam
     )
   }
 
@@ -58,11 +56,13 @@ export default function QuizPage() {
           {sorted.slice(0, 3).map((team, i) => (
             <div key={i} className={`${styles.podiumSlot} ${i === 0 ? styles.podiumFirst : ''}`}
               style={{ borderColor: team.color }}>
-              <span className={styles.podiumMedal}>
-                {i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'}
-              </span>
+              {team.photo
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img src={team.photo} alt={team.name} className={styles.podiumPhoto} />
+                : <span className={styles.podiumMedal}>{i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'}</span>
+              }
               <span className={styles.podiumName} style={{ color: team.color }}>{team.name}</span>
-              <span className={styles.podiumScore} style={{ color: team.color }}>{(team as any).score ?? 0} pts</span>
+              <span className={styles.podiumScore} style={{ color: team.color }}>{team.score ?? 0} pts</span>
             </div>
           ))}
         </div>
@@ -73,11 +73,13 @@ export default function QuizPage() {
           {sorted.map((team, i) => (
             <div key={i} className={styles.teamCertRow} style={{ borderColor: team.color }}>
               <div className={styles.teamCertLeft}>
-                <span className={styles.teamCertPos}>
-                  {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
-                </span>
+                {team.photo
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={team.photo} alt={team.name} className={styles.teamCertPhoto} />
+                  : <span className={styles.teamCertPos}>{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}</span>
+                }
                 <span className={styles.teamCertName} style={{ color: team.color }}>{team.name}</span>
-                <span className={styles.teamCertScore} style={{ color: team.color }}>{(team as any).score ?? 0} pts</span>
+                <span className={styles.teamCertScore} style={{ color: team.color }}>{team.score ?? 0} pts</span>
               </div>
               <button
                 className="btn btn-ghost btn-sm"

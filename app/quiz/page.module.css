@@ -98,3 +98,15 @@
   .endBtns      { flex-direction: column; }
   .teamCertRow  { flex-wrap: wrap; gap: 8px; }
 }
+
+/* Participant photos in end screen */
+.podiumPhoto {
+  width: 56px; height: 56px; border-radius: 50%;
+  object-fit: cover; border: 3px solid;
+  margin-bottom: 4px; display: block;
+}
+.teamCertPhoto {
+  width: 34px; height: 34px; border-radius: 50%;
+  object-fit: cover; border: 2px solid;
+  flex-shrink: 0;
+}

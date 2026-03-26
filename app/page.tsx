@@ -3,12 +3,12 @@ import Link from 'next/link'
 import styles from './page.module.css'
 
 const SECTIONS = [
-  { name: 'Little word Sprouts',    grades: ' Sprout 2–3',   icon: '🌱' },
-  { name: 'Rising Word Explorers',    grades: 'Stepping Stone-Grade 1',   icon: '🌿' },
-  { name: 'Word Builders League',    grades: 'Grade 2–3',   icon: '🌳' },
-  { name: 'Word Champions Circle',    grades: 'Grade 4–5',   icon: '🌟' },
-  { name: 'Elite Word Masters', grades: 'JSSS1 - JSSS3',   icon: '🧠' },
-  { name: 'Grand Spelling Legends', grades: 'SSS1 - SSS2', icon: '👑' },
+  { name: 'Little Sprouts',    grades: 'Sprout 1–2',              icon: '🌱' },
+  { name: 'Rising Explorers',  grades: 'Stepping Stone – Grade 1', icon: '🪴' },
+  { name: 'Builders League',   grades: 'Grade 2–3',               icon: '📗' },
+  { name: 'Champions Circle',  grades: 'Grade 4–5',               icon: '📘' },
+  { name: 'Elite Masters',     grades: 'Grade 7–9 (JSS 1–3)',     icon: '🎓' },
+  { name: 'Grand Legends',     grades: 'Grade 10–11 (SSS 1–2)',   icon: '🏫' },
 ]
 
 export default function HomePage() {
@@ -16,14 +16,8 @@ export default function HomePage() {
     <div className={styles.hero}>
       {/* School identity */}
       <div className={styles.identity}>
-        <Image
-          src="/logo.jpeg"
-          alt="Seat of Wisdom Group of Schools"
-          width={120}
-          height={120}
-          className={styles.logo}
-          priority
-        />
+        <Image src="/logo.jpeg" alt="Seat of Wisdom Group of Schools"
+          width={120} height={120} className={styles.logo} priority />
         <div className={styles.identityText}>
           <h1 className={styles.school1}>Seat of Wisdom</h1>
           <h2 className={styles.school2}>Group of Schools</h2>
@@ -36,14 +30,9 @@ export default function HomePage() {
       <p className={styles.appTitle}>Quiz Championship</p>
       <p className={styles.cats}>📐 Maths &nbsp;·&nbsp; 🐝 Spelling Bee &nbsp;·&nbsp; 🌍 General Knowledge</p>
 
-      {/* Section cards */}
       <div className={styles.grid}>
         {SECTIONS.map(s => (
-          <Link
-            key={s.name}
-            href={`/setup?section=${encodeURIComponent(s.name)}`}
-            className={styles.card}
-          >
+          <Link key={s.name} href={`/setup?section=${encodeURIComponent(s.name)}`} className={styles.card}>
             <span className={styles.cardIcon}>{s.icon}</span>
             <span className={styles.cardName}>{s.name}</span>
             <span className={styles.cardGrades}>{s.grades}</span>
