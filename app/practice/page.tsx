@@ -53,11 +53,10 @@ export default function PracticePage() {
         alert('No practice questions found for this selection.\n\nAsk your teacher to add some in the Admin panel under "Practice Questions".')
         return
       }
-      const shuffled = [...qs].sort(() => Math.random() - 0.5)
-      setQs(shuffled)
+      setQs(qs)
       setIdx(0); setRevealed(false); setShowHint(false)
       setScore(0); setStreak(0); setBestStreak(0)
-      setAnswers(new Array(shuffled.length).fill(null))
+      setAnswers(new Array(qs.length).fill(null))
       setStage('quiz')
     } finally { setLoading(false) }
   }, [section, category, studentName])

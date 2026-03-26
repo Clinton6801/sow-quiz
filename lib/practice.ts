@@ -1,6 +1,8 @@
 import { supabase } from './supabase'
 import { Section, Category } from './questions'
 
+const PRACTICE_LIMIT = 20
+
 export interface PracticeQuestion {
   id: string
   section: Section
@@ -15,14 +17,25 @@ export async function getPracticeQuestions(
   section: Section,
   category: Category
 ): Promise<PracticeQuestion[]> {
+  // Fetch all questions for this section/category
   const { data, error } = await supabase
     .from('practice_questions')
     .select('*')
     .eq('section', section)
     .eq('category', category)
-    .order('created_at', { ascending: true })
+
   if (error) throw error
-  return data as PracticeQuestion[]
+  if (!data || data.length === 0) return []
+
+  // Shuffle using Fisher-Yates
+  const shuffled = [...data] as PracticeQuestion[]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+
+  // Return up to 20 — if fewer than 20 exist, return all of them
+  return shuffled.slice(0, PRACTICE_LIMIT)
 }
 
 export async function addPracticeQuestion(q: {
