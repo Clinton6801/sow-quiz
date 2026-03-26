@@ -8,8 +8,8 @@ import {
   getPracticeQuestions, addPracticeQuestion, deletePracticeQuestion,
   PracticeQuestion
 } from '@/lib/practice'
-import { useToast } from '@/context/ToastContext'
-import { supabase } from '@/lib/supabase'
+import { useToast } from '../../context/ToastContext'
+import { supabase } from '../../lib/supabase'
 import styles from './page.module.css'
 
 const ADMIN_PASSWORD = 'sow2025'

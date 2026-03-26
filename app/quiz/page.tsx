@@ -1,10 +1,10 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useGame } from '@/context/GameContext'
-import ScoreBoard from '@/components/quiz/ScoreBoard'
-import Round1Grid from '@/components/quiz/Round1Grid'
-import Round2FastFingers from '@/components/quiz/Round2FastFingers'
+import { useGame } from '../../context/GameContext'
+import ScoreBoard from '../../components/quiz/ScoreBoard'
+import Round1Grid from '../../components/quiz/Round1Grid'
+import Round2FastFingers from '../../components/quiz/Round2FastFingers'
 import styles from './page.module.css'
 
 export default function QuizPage() {
@@ -25,7 +25,7 @@ export default function QuizPage() {
   }
 
   // Sort teams by score
-  const sorted = [...(game.teams ?? [])].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  const sorted = [...(game.teams ?? [])].sort((a, b) => ((b as any).score ?? 0) - ((a as any).score ?? 0))
   const date   = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
   const handleCertificate = (team: typeof sorted[0], position: number) => {
@@ -34,7 +34,7 @@ export default function QuizPage() {
     router.push(
       `/certificate?` +
       `winner=${encodeURIComponent(team.name)}&` +
-      `score=${team.score ?? 0}&` +
+      `score=${(team as any).score ?? 0}&` +
       `section=${encodeURIComponent(game.section ?? '')}&` +
       `category=Quiz Championship&` +
       `position=${encodeURIComponent(posLabel)}&` +
@@ -62,7 +62,8 @@ export default function QuizPage() {
                 : <span className={styles.podiumMedal}>{i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'}</span>
               }
               <span className={styles.podiumName} style={{ color: team.color }}>{team.name}</span>
-              <span className={styles.podiumScore} style={{ color: team.color }}>{team.score ?? 0} pts</span>
+              <span className={styles.podiumScore} style={{ color: team.color }}>{(
+                team as any).score ?? 0} pts</span>
             </div>
           ))}
         </div>
@@ -79,7 +80,7 @@ export default function QuizPage() {
                   : <span className={styles.teamCertPos}>{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}</span>
                 }
                 <span className={styles.teamCertName} style={{ color: team.color }}>{team.name}</span>
-                <span className={styles.teamCertScore} style={{ color: team.color }}>{team.score ?? 0} pts</span>
+                <span className={styles.teamCertScore} style={{ color: team.color }}>{(team as any).score ?? 0} pts</span>
               </div>
               <button
                 className="btn btn-ghost btn-sm"
