@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { SECTIONS, CATEGORIES, CATEGORY_ICONS, Section, Category } from '../../lib/questions'
 import { getPracticeQuestions, PracticeQuestion } from '../../lib/practice'
+import { speakWord } from '../../lib/speech'
 import styles from './page.module.css'
 
 type Stage = 'setup' | 'quiz' | 'results'
@@ -172,10 +173,7 @@ export default function PracticePage() {
               {current.question}
             </div>
             <button className={styles.audioBtn} onClick={() => {
-              if (!window.speechSynthesis) return
-              window.speechSynthesis.cancel()
-              const u = new SpeechSynthesisUtterance(current.question)
-              u.rate = 0.75; window.speechSynthesis.speak(u)
+              speakWord(current.question)
             }}>🔊 Hear the Word</button>
           </div>
         ) : (

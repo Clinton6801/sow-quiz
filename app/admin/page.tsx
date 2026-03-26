@@ -3,11 +3,11 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   getQuestions, addQuestion, deleteQuestion,
   SECTIONS, CATEGORIES, CATEGORY_ICONS, Question, Section, Category
-} from '@/lib/questions'
+} from '../../lib/questions'
 import {
-  getPracticeQuestions, addPracticeQuestion, deletePracticeQuestion,
+  getAllPracticeQuestions, addPracticeQuestion, deletePracticeQuestion,
   PracticeQuestion
-} from '@/lib/practice'
+} from '../../lib/practice'
 import { useToast } from '../../context/ToastContext'
 import { supabase } from '../../lib/supabase'
 import styles from './page.module.css'
@@ -88,7 +88,7 @@ export default function AdminPage() {
   const loadPractice = useCallback(async () => {
     if (!authed) return
     setPracticeLoad(true)
-    try { setPracticeQs(await getPracticeQuestions(section, category)) }
+    try { setPracticeQs(await getAllPracticeQuestions(section, category)) }
     catch { showToast('Error loading', 'error') }
     finally { setPracticeLoad(false) }
   }, [section, category, authed])
