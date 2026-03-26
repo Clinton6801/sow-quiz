@@ -4,11 +4,11 @@ import styles from './page.module.css'
 
 const SECTIONS = [
   { name: 'Little Sprouts',    grades: 'Sprout 1–2',              icon: '🌱' },
-  { name: 'Rising Explorers',  grades: 'Stepping Stone – Grade 1', icon: '🪴' },
-  { name: 'Builders League',   grades: 'Grade 2–3',               icon: '📗' },
-  { name: 'Champions Circle',  grades: 'Grade 4–5',               icon: '📘' },
-  { name: 'Elite Masters',     grades: 'Grade 7–9 (JSS 1–3)',     icon: '🎓' },
-  { name: 'Grand Legends',     grades: 'Grade 10–11 (SSS 1–2)',   icon: '🏫' },
+  { name: 'Rising Explorers',  grades: 'Stepping Stone – Grade 1', icon: '🌿' },
+  { name: 'Builders League',   grades: 'Grade 2–3',               icon: '🌳' },
+  { name: 'Champions Circle',  grades: 'Grade 4–5',               icon: '🌟' },
+  { name: 'Elite Masters',     grades: 'Grade 7–9 (JSS 1–3)',     icon: '🧠' },
+  { name: 'Grand Legends',     grades: 'Grade 10–11 (SSS 1–2)',   icon: '👑' },
 ]
 
 export default function HomePage() {
