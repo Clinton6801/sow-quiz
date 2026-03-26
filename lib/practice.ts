@@ -13,11 +13,11 @@ export interface PracticeQuestion {
   created_at: string
 }
 
+// ── For students: fetch ALL, shuffle, return random 20 ──
 export async function getPracticeQuestions(
   section: Section,
   category: Category
 ): Promise<PracticeQuestion[]> {
-  // Fetch all questions for this section/category
   const { data, error } = await supabase
     .from('practice_questions')
     .select('*')
@@ -27,15 +27,30 @@ export async function getPracticeQuestions(
   if (error) throw error
   if (!data || data.length === 0) return []
 
-  // Shuffle using Fisher-Yates
+  // Fisher-Yates shuffle
   const shuffled = [...data] as PracticeQuestion[]
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
     ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
   }
 
-  // Return up to 20 — if fewer than 20 exist, return all of them
   return shuffled.slice(0, PRACTICE_LIMIT)
+}
+
+// ── For admin: fetch ALL questions with no limit, ordered by date ──
+export async function getAllPracticeQuestions(
+  section: Section,
+  category: Category
+): Promise<PracticeQuestion[]> {
+  const { data, error } = await supabase
+    .from('practice_questions')
+    .select('*')
+    .eq('section', section)
+    .eq('category', category)
+    .order('created_at', { ascending: true })
+
+  if (error) throw error
+  return (data ?? []) as PracticeQuestion[]
 }
 
 export async function addPracticeQuestion(q: {
