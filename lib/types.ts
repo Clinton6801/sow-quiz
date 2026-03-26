@@ -1,6 +1,7 @@
 export interface Team {
   name: string
   color: string
+  photo?: string   // base64 data URL — captured or uploaded on setup page
 }
 
 export type Round = 'round1' | 'round2'

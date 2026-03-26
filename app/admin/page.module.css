@@ -172,3 +172,28 @@
   .tabs     { max-width: 100%; }
   .tab      { font-size: 0.78rem; padding: 8px 10px; }
 }
+
+/* Edit inline */
+.editForm  { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.editInput { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1.5px solid var(--border2); background: var(--surface2); color: var(--text); font-family: inherit; font-size: 0.88rem; resize: vertical; }
+.editInput:focus { outline: none; border-color: var(--cyan); }
+.editBtns  { display: flex; gap: 8px; }
+.editBtn   { background: rgba(0,229,255,0.08); border: 1px solid var(--cyan); color: var(--cyan); border-radius: 8px; padding: 4px 10px; font-size: 0.76rem; font-weight: 800; cursor: pointer; transition: all 0.18s; white-space: nowrap; }
+.editBtn:hover { background: var(--cyan); color: var(--bg); }
+.itemBtns  { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+
+/* CSV import */
+.csvPanel    { background: var(--surface); border: 1.5px solid var(--cyan); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.csvTitle    { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--cyan); margin-bottom: 6px; }
+.csvHint     { font-size: 0.82rem; color: var(--text2); margin-bottom: 12px; line-height: 1.6; }
+.csvHint code { background: var(--surface2); padding: 1px 6px; border-radius: 4px; font-size: 0.78rem; color: var(--text); }
+.csvActions  { display: flex; gap: 8px; margin-bottom: 10px; }
+.csvTextarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--text); font-family: monospace; font-size: 0.82rem; resize: vertical; }
+.csvTextarea:focus { outline: none; border-color: var(--cyan); }
+.csvPreview      { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-top: 12px; }
+.csvPreviewTitle { font-size: 0.84rem; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+.csvPreviewList  { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.csvPreviewRow   { display: flex; gap: 8px; font-size: 0.8rem; flex-wrap: wrap; }
+.csvPreviewQ     { color: var(--text); flex: 1; }
+.csvPreviewA     { color: var(--green); font-weight: 700; }
+.csvMore         { font-size: 0.76rem; color: var(--text2); font-style: italic; }
