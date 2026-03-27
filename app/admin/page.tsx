@@ -11,9 +11,10 @@ import {
 import { useToast } from '../../context/ToastContext'
 import { supabase } from '../../lib/supabase'
 import styles from './page.module.css'
+import VoicePicker from '../../components/ui/VoicePicker'
 
 const ADMIN_PASSWORD = 'sow2025'
-type AdminTab = 'quiz' | 'practice'
+type AdminTab = 'quiz' | 'practice' | 'settings'
 
 // ── Edit question in place ──
 async function updateQuestion(id: string, question: string, answer: string) {
@@ -218,6 +219,9 @@ export default function AdminPage() {
         <button className={`${styles.tab} ${tab === 'practice' ? styles.tabActive : ''}`} onClick={() => setTab('practice')}>
           📚 Practice Questions <span className={styles.tabCount}>{practiceQs.length}</span>
         </button>
+        <button className={`${styles.tab} ${tab === 'settings' ? styles.tabActive : ''}`} onClick={() => setTab('settings')}>
+          ⚙ Settings
+        </button>
       </div>
 
       {/* Filters */}
@@ -326,6 +330,19 @@ export default function AdminPage() {
             </button>
           </div>
         </>
+      )}
+
+      {/* ── SETTINGS TAB ── */}
+      {tab === 'settings' && (
+        <div style={{ maxWidth: 560 }}>
+          <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '1.3rem', color: 'var(--cyan)', marginBottom: 16 }}>
+            🔊 Audio Settings
+          </h3>
+          <VoicePicker />
+          <div className={styles.practiceNote} style={{ marginTop: 8 }}>
+            💡 The voice selected here is saved to this device and used whenever students hear spelling bee words in Practice Mode or the Quiz.
+          </div>
+        </div>
       )}
 
       {/* ── PRACTICE TAB ── */}

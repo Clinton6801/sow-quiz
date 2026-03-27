@@ -1,0 +1,25 @@
+.wrap   { background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 20px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.label  { font-weight: 900; font-size: 0.95rem; color: var(--text); margin-bottom: 3px; }
+.sub    { font-size: 0.78rem; color: var(--text2); line-height: 1.5; }
+
+.testBtn {
+  padding: 8px 18px; border-radius: 999px;
+  border: 2px solid var(--cyan); background: rgba(0,229,255,0.08);
+  color: var(--cyan); font-weight: 800; font-size: 0.84rem;
+  cursor: pointer; transition: all 0.18s; white-space: nowrap; flex-shrink: 0;
+}
+.testBtn:hover:not(:disabled) { background: var(--cyan); color: var(--bg); }
+.testBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.select {
+  width: 100%; padding: 10px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border2); background: var(--bg2);
+  color: var(--text); font-size: 0.88rem; font-family: inherit;
+  margin-bottom: 8px; cursor: pointer;
+}
+.select:focus { outline: none; border-color: var(--cyan); }
+
+.saved   { font-size: 0.76rem; color: var(--green); font-weight: 700; margin-bottom: 10px; }
+.tip     { font-size: 0.78rem; color: var(--text2); background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.2); border-radius: 8px; padding: 8px 12px; line-height: 1.6; }
+.loading { font-size: 0.84rem; color: var(--text2); font-style: italic; padding: 12px 0; }

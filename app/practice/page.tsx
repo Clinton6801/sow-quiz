@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { SECTIONS, CATEGORIES, CATEGORY_ICONS, Section, Category } from '../../lib/questions'
 import { getPracticeQuestions, PracticeQuestion } from '../../lib/practice'
-import { speakWord } from '../../lib/speech'
+import { speakWord, repeatWord } from '../../lib/speech'
 import styles from './page.module.css'
 
 type Stage = 'setup' | 'quiz' | 'results'
@@ -172,9 +172,14 @@ export default function PracticePage() {
             <div className={`${styles.spellingWord} ${revealed ? styles.unblurred : ''}`}>
               {current.question}
             </div>
-            <button className={styles.audioBtn} onClick={() => {
-              speakWord(current.question)
-            }}>🔊 Hear the Word</button>
+            <div className={styles.audioBtns}>
+              <button className={styles.audioBtn} onClick={() => speakWord(current.question)}>
+                🔊 Hear the Word
+              </button>
+              <button className={styles.repeatBtn} onClick={() => repeatWord(current.question)}>
+                🔁 Repeat
+              </button>
+            </div>
           </div>
         ) : (
           <p className={styles.qText}>{current.question}</p>
