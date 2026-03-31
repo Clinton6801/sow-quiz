@@ -134,3 +134,60 @@
 .certBannerLeft  { display: flex; flex-direction: column; gap: 3px; }
 .certBannerTitle { font-weight: 900; font-size: 0.95rem; color: var(--gold); }
 .certBannerSub   { font-size: 0.76rem; color: var(--text2); }
+
+/* ── Spelling Bee typed input ── */
+.typingWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: stretch;
+}
+.spellingInput {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  text-align: center;
+  letter-spacing: 3px;
+  border-radius: 14px;
+  border: 2.5px solid var(--cyan);
+  background: var(--surface2);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.spellingInput:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.15);
+}
+.spellingInput::placeholder { color: var(--text2); font-size: 0.9rem; letter-spacing: 0; font-weight: 400; }
+
+/* Result after submission */
+.spellingResult {
+  margin-top: 16px;
+  border-radius: 16px;
+  padding: 18px 20px;
+  border: 2.5px solid;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  animation: popIn 0.3s ease;
+}
+.spellingCorrect { border-color: var(--green); background: rgba(0,230,118,0.08); }
+.spellingWrong   { border-color: var(--danger); background: rgba(255,23,68,0.08); }
+
+.spellingResultIcon { font-size: 2rem; flex-shrink: 0; }
+.spellingResultText { flex: 1; }
+.spellingYouTyped   { font-size: 0.9rem; color: var(--text2); margin-bottom: 4px; }
+.spellingYouTyped strong { color: var(--text); font-size: 1rem; }
+.spellingCorrectWord { font-size: 0.9rem; color: var(--danger); margin-bottom: 4px; }
+.spellingCorrectWord strong { font-size: 1.1rem; color: var(--green); }
+.spellingResultLabel {
+  font-weight: 900;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+.spellingCorrect .spellingResultLabel { color: var(--green); }
+.spellingWrong   .spellingResultLabel { color: var(--danger); }
