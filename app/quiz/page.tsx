@@ -25,7 +25,11 @@ export default function QuizPage() {
   }
 
   // Sort teams by score
-  const sorted = [...(game.teams ?? [])].sort((a, b) => ((b as any).score ?? 0) - ((a as any).score ?? 0))
+  // ✅ AFTER — merge scores map into team objects first
+const sorted = [...(game.teams ?? [])].map(team => ({
+  ...team,
+  score: game.scores?.[team.name] ?? 0,
+})).sort((a, b) => b.score - a.score)
   const date   = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
   const handleCertificate = (team: typeof sorted[0], position: number) => {
@@ -34,7 +38,7 @@ export default function QuizPage() {
     router.push(
       `/certificate?` +
       `winner=${encodeURIComponent(team.name)}&` +
-      `score=${(team as any).score ?? 0}&` +
+      `score=${team.score}&` +
       `section=${encodeURIComponent(game.section ?? '')}&` +
       `category=Quiz Championship&` +
       `position=${encodeURIComponent(posLabel)}&` +
