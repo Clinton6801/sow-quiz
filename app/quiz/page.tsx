@@ -9,8 +9,11 @@ import styles from './page.module.css'
 
 export default function QuizPage() {
   const router = useRouter()
-  const { game, setRound } = useGame()
+  const { game, setRound, lastAward, undoLastAward, adjustPoints } = useGame()
   const [showEndScreen, setShowEndScreen] = useState(false)
+  const [showTimerConfig, setShowTimerConfig] = useState(false)
+  const [timerSeconds, setTimerSeconds] = useState<number | undefined>(undefined)
+  const [timerInput, setTimerInput] = useState(30)
 
   if (!game.started) {
     return (
@@ -24,13 +27,12 @@ export default function QuizPage() {
     )
   }
 
-  // Sort teams by score
-  // ✅ AFTER — merge scores map into team objects first
-const sorted = [...(game.teams ?? [])].map(team => ({
-  ...team,
-  score: game.scores?.[team.name] ?? 0,
-})).sort((a, b) => b.score - a.score)
-  const date   = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  const sorted = [...(game.teams ?? [])].map(team => ({
+    ...team,
+    score: game.scores?.[team.name] ?? 0,
+  })).sort((a, b) => b.score - a.score)
+
+  const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 
   const handleCertificate = (team: typeof sorted[0], position: number) => {
     const posLabel = position === 1 ? '1st Place' : position === 2 ? '2nd Place' : position === 3 ? '3rd Place' : `${position}th Place`
@@ -122,6 +124,63 @@ const sorted = [...(game.teams ?? [])].map(team => ({
         <ScoreBoard />
 
         <div className={styles.actions}>
+          {/* Undo last award */}
+          {lastAward && (
+            <button className={`btn btn-ghost btn-sm ${styles.undoBtn}`} onClick={undoLastAward}
+              title={`Undo +${lastAward.pts} → ${lastAward.teamName}`}>
+              ↩ Undo ({lastAward.teamName})
+            </button>
+          )}
+
+          {/* Timer toggle for Round 1 */}
+          {game.round === 'round1' && (
+            <div className={styles.timerConfig}>
+              <button
+                className={`btn btn-ghost btn-sm ${timerSeconds ? styles.timerActive : ''}`}
+                onClick={() => setShowTimerConfig(v => !v)}
+                title="Configure question timer"
+              >
+                ⏱ {timerSeconds ? `${timerSeconds}s` : 'Timer'}
+              </button>
+              {showTimerConfig && (
+                <div className={styles.timerDropdown}>
+                  <p className={styles.timerDropLabel}>Question timer</p>
+                  <div className={styles.timerRow}>
+                    <input
+                      type="number" min={5} max={120} value={timerInput}
+                      onChange={e => setTimerInput(Number(e.target.value))}
+                      className={styles.timerInput}
+                    />
+                    <span className={styles.timerSec}>sec</span>
+                  </div>
+                  <div className={styles.timerBtns}>
+                    <button className="btn btn-green btn-sm" onClick={() => {
+                      setTimerSeconds(timerInput)
+                      setShowTimerConfig(false)
+                    }}>Enable</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => {
+                      setTimerSeconds(undefined)
+                      setShowTimerConfig(false)
+                    }}>Off</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Manual score adjust */}
+          <div className={styles.scoreAdjust}>
+            {game.teams.map(t => (
+              <div key={t.name} className={styles.adjustRow}>
+                <span className={styles.adjustName} style={{ color: t.color }}>{t.name}</span>
+                <button className={styles.adjustBtn} onClick={() => adjustPoints(t.name, game.pointsPerQ)}
+                  title={`+${game.pointsPerQ} pts`}>+</button>
+                <button className={styles.adjustBtn} onClick={() => adjustPoints(t.name, -game.pointsPerQ)}
+                  title={`-${game.pointsPerQ} pts`}>−</button>
+              </div>
+            ))}
+          </div>
+
           <button className="btn btn-ghost btn-sm"
             onClick={() => setRound(game.round === 'round1' ? 'round2' : 'round1')}>
             Switch Round
@@ -132,7 +191,10 @@ const sorted = [...(game.teams ?? [])].map(team => ({
         </div>
       </div>
 
-      {game.round === 'round1' ? <Round1Grid /> : <Round2FastFingers />}
+      {game.round === 'round1'
+        ? <Round1Grid timerSeconds={timerSeconds} />
+        : <Round2FastFingers />
+      }
     </div>
   )
 }

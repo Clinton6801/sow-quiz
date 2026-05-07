@@ -5,7 +5,11 @@ import { getAllForSection, CATEGORIES, CATEGORY_ICONS, Question } from '../../li
 import QuestionModal from './QuestionModal'
 import styles from './Round1Grid.module.css'
 
-export default function Round1Grid() {
+interface Props {
+  timerSeconds?: number
+}
+
+export default function Round1Grid({ timerSeconds }: Props) {
   const { game } = useGame()
   const [grouped, setGrouped] = useState<Record<string, Question[]>>({})
   const [loading, setLoading] = useState(true)
@@ -25,8 +29,35 @@ export default function Round1Grid() {
 
   if (loading) return <p style={{ color: 'var(--text2)', padding: '32px 0' }}>Loading questions…</p>
 
+  const allQs = CATEGORIES.flatMap(cat => grouped[cat] || [])
+  const totalCount = allQs.length
+  const answeredCount = allQs.filter(q => game.answeredQs[q.id]).length
+  const allDone = totalCount > 0 && answeredCount === totalCount
+
   return (
     <div className={styles.wrap}>
+      {/* Progress counter */}
+      {totalCount > 0 && (
+        <div className={styles.progressRow}>
+          <div className={styles.progressTrack}>
+            <div
+              className={styles.progressFill}
+              style={{ width: `${(answeredCount / totalCount) * 100}%` }}
+            />
+          </div>
+          <span className={styles.progressLabel}>
+            {answeredCount} / {totalCount} answered
+          </span>
+        </div>
+      )}
+
+      {/* All done banner */}
+      {allDone && (
+        <div className={styles.allDoneBanner}>
+          🎉 All questions answered!
+        </div>
+      )}
+
       {CATEGORIES.map(cat => {
         const qs = grouped[cat] || []
         return (
@@ -64,6 +95,7 @@ export default function Round1Grid() {
           question={active}
           onClose={() => setActive(null)}
           onAwarded={load}
+          timerSeconds={timerSeconds}
         />
       )}
     </div>

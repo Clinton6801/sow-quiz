@@ -72,6 +72,14 @@ export default function Round2FastFingers() {
     setBuzzed(null)
   }
 
+  const handleSkip = () => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    setRevealed(true)
+    setBuzzed(null)
+    setLocked(false)
+    showToast('Question skipped — no points awarded', 'info')
+  }
+
   const timerColor = pct > 60 ? 'var(--green)' : pct > 28 ? 'var(--gold)' : 'var(--danger)'
 
   return (
@@ -161,6 +169,11 @@ export default function Round2FastFingers() {
             setRevealed(true)
           }}>
             👁 Reveal Answer
+          </button>
+        )}
+        {current && !revealed && (
+          <button className={styles.skipBtn} onClick={handleSkip}>
+            ✗ No Answer
           </button>
         )}
         <span className={styles.prog}>{Math.max(0, idx + 1)} / {allQs.length}</span>

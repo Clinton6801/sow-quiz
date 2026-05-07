@@ -5,9 +5,10 @@ import { useToast } from '../../context/ToastContext'
 import { useAdminAuth } from '../../hooks/useAdminAuth'
 import AdminGate from '../../components/ui/AdminGate'
 import LeaderboardTable from '../../components/leaderboard/LeaderboardTable'
+import { SECTIONS } from '../../lib/questions'
 import styles from './page.module.css'
 
-const SECTION_FILTERS = ['All', 'Little Sprouts', 'Rising Explorers', 'Builders League', 'Champions Circle', 'Elite Masters', 'Grand Legends']
+const SECTION_FILTERS = ['All', ...SECTIONS]
 
 const TIME_FILTERS = [
   { label: 'All Time', value: 'all' },

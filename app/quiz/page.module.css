@@ -110,3 +110,65 @@
   object-fit: cover; border: 2px solid;
   flex-shrink: 0;
 }
+
+/* ── Undo button ── */
+.undoBtn {
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ── Timer config dropdown ── */
+.timerConfig { position: relative; }
+.timerActive { border-color: var(--cyan) !important; color: var(--cyan) !important; }
+.timerDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  min-width: 180px;
+  z-index: 100;
+  box-shadow: var(--shadow);
+  animation: fadeIn 0.18s ease;
+}
+.timerDropLabel { font-size: 0.72rem; font-weight: 900; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.timerRow { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.timerInput { width: 70px; padding: 6px 10px; font-size: 0.9rem; }
+.timerSec { font-size: 0.82rem; color: var(--text2); font-weight: 700; }
+.timerBtns { display: flex; gap: 6px; }
+
+/* ── Manual score adjust ── */
+.scoreAdjust {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+.adjustRow { display: flex; align-items: center; gap: 6px; }
+.adjustName { font-size: 0.74rem; font-weight: 900; flex: 1; min-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.adjustBtn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  line-height: 1;
+}
+.adjustBtn:hover { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.08); }
+
+@media (max-width: 768px) {
+  .scoreAdjust { display: none; }
+  .timerDropdown { right: auto; left: 0; }
+}
