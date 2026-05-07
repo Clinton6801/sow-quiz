@@ -1,12 +1,17 @@
 /**
  * SOW Spelling Bee — Speech Utility
  *
- * Key fixes:
- * 1. Split announcement into TWO separate queued utterances so the TTS engine
- *    doesn't re-process the word the second time (fixes "pronounced then spelled" bug).
- * 2. Wrap the word in a full sentence for the announcement — forces word-level
- *    processing even for rare/long words.
- * 3. The second utterance uses a slower rate so contestants can hear it clearly.
+ * Core principle: speak the word ONCE per utterance, with NO repetition
+ * in the same string. Repeating the word (either in one string or across
+ * two queued utterances) causes Chrome/Edge TTS to switch to letter-by-letter
+ * mode on the second occurrence. One word, one utterance, spoken slowly.
+ *
+ * The announcement ("Your word is:") provides sentence context so the engine
+ * treats the word as a real word rather than an abbreviation — but the word
+ * itself only appears once in the utterance.
+ *
+ * For the "Hear Again" button, we cancel and re-speak a fresh utterance
+ * rather than queuing a second one.
  */
 
 const VOICE_KEY = 'sow-spelling-voice'
@@ -21,7 +26,6 @@ export function getPreferredVoiceName(): string {
   return localStorage.getItem(VOICE_KEY) ?? ''
 }
 
-// Voices load asynchronously in browsers — wait until they're ready
 function waitForVoices(): Promise<SpeechSynthesisVoice[]> {
   return new Promise(resolve => {
     const voices = window.speechSynthesis.getVoices()
@@ -34,7 +38,6 @@ function waitForVoices(): Promise<SpeechSynthesisVoice[]> {
     }
     window.speechSynthesis.addEventListener('voiceschanged', onVoicesChanged)
 
-    // Fallback — some browsers never fire voiceschanged
     setTimeout(() => {
       window.speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
       resolve(window.speechSynthesis.getVoices())
@@ -80,72 +83,51 @@ async function pickVoice(): Promise<SpeechSynthesisVoice | null> {
 }
 
 /**
- * Build a SpeechSynthesisUtterance with the chosen voice applied.
+ * Speak a single utterance with the given voice settings.
+ * Always cancels any ongoing speech first.
  */
-function makeUtterance(
+function speak(
   text: string,
   voice: SpeechSynthesisVoice | null,
-  rate: number,
-  pitch = 1,
-  volume = 1
-): SpeechSynthesisUtterance {
-  const u = new SpeechSynthesisUtterance(text)
-  if (voice) u.voice = voice
-  u.lang   = voice?.lang ?? 'en-GB'
-  u.rate   = rate
-  u.pitch  = pitch
-  u.volume = volume
-  return u
+  rate: number
+): void {
+  window.speechSynthesis.cancel()
+  setTimeout(() => {
+    const u = new SpeechSynthesisUtterance(text)
+    if (voice) u.voice = voice
+    u.lang   = voice?.lang ?? 'en-GB'
+    u.rate   = rate
+    u.pitch  = 1
+    u.volume = 1
+    window.speechSynthesis.speak(u)
+  }, 120)
 }
 
 /**
- * Speaks a spelling bee word as TWO separate queued utterances:
+ * speakWord — used when a new spelling bee question loads or the host
+ * clicks "Hear the Word".
  *
- *   Utterance 1 (rate 0.82): "Your word is: [word]."
- *   Utterance 2 (rate 0.65): "[word]."
- *
- * Using two utterances prevents the TTS engine from re-processing the word
- * the second time, which is what causes the "pronounced then spelled" bug.
- * The sentence context in utterance 1 forces word-level pronunciation even
- * for rare or long words like "abstemious".
+ * Speaks: "Your word is: [word]."
+ * — The sentence context prevents the engine treating the word as an
+ *   abbreviation. The word appears exactly ONCE so it cannot switch to
+ *   letter-by-letter mode mid-utterance.
+ * — Rate 0.78 is slow enough to be clear without sounding robotic.
  */
 export async function speakWord(word: string): Promise<void> {
   if (typeof window === 'undefined' || !window.speechSynthesis) return
-
-  window.speechSynthesis.cancel()
-
-  const clean = word.trim()
   const voice = await pickVoice()
-
-  setTimeout(() => {
-    // Utterance 1 — announcement with sentence context
-    const u1 = makeUtterance(`Your word is: ${clean}.`, voice, 0.82)
-
-    // Utterance 2 — word repeated slowly and clearly, standalone
-    const u2 = makeUtterance(clean, voice, 0.65)
-
-    window.speechSynthesis.speak(u1)
-    window.speechSynthesis.speak(u2)
-  }, 120)
+  speak(`Your word is: ${word.trim()}.`, voice, 0.78)
 }
 
 /**
- * Repeats the word twice using two separate utterances.
- * Used for the "Hear Again" / "Repeat" button.
+ * repeatWord — used for the "Repeat" / "Hear Again" button.
+ *
+ * Speaks just the word alone at a slower rate.
+ * We do NOT queue two utterances — we cancel and speak fresh each time
+ * the button is pressed, so the engine always processes it as a new word.
  */
 export async function repeatWord(word: string): Promise<void> {
   if (typeof window === 'undefined' || !window.speechSynthesis) return
-
-  window.speechSynthesis.cancel()
-
-  const clean = word.trim()
   const voice = await pickVoice()
-
-  setTimeout(() => {
-    const u1 = makeUtterance(clean, voice, 0.65)
-    const u2 = makeUtterance(clean, voice, 0.65)
-
-    window.speechSynthesis.speak(u1)
-    window.speechSynthesis.speak(u2)
-  }, 120)
+  speak(word.trim(), voice, 0.65)
 }
