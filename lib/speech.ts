@@ -1,7 +1,12 @@
 /**
  * SOW Spelling Bee — Speech Utility
- * Option A: Wraps word in announcement sentence (fixes short word pronunciation)
- * Option B: Voice picker with localStorage preference
+ *
+ * Key fixes:
+ * 1. Split announcement into TWO separate queued utterances so the TTS engine
+ *    doesn't re-process the word the second time (fixes "pronounced then spelled" bug).
+ * 2. Wrap the word in a full sentence for the announcement — forces word-level
+ *    processing even for rare/long words.
+ * 3. The second utterance uses a slower rate so contestants can hear it clearly.
  */
 
 const VOICE_KEY = 'sow-spelling-voice'
@@ -16,13 +21,12 @@ export function getPreferredVoiceName(): string {
   return localStorage.getItem(VOICE_KEY) ?? ''
 }
 
-// Voices load asynchronously in browsers — this waits until they're ready
+// Voices load asynchronously in browsers — wait until they're ready
 function waitForVoices(): Promise<SpeechSynthesisVoice[]> {
   return new Promise(resolve => {
     const voices = window.speechSynthesis.getVoices()
     if (voices.length > 0) { resolve(voices); return }
 
-    // Voices not loaded yet — wait for the event
     const onVoicesChanged = () => {
       const v = window.speechSynthesis.getVoices()
       window.speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
@@ -30,7 +34,7 @@ function waitForVoices(): Promise<SpeechSynthesisVoice[]> {
     }
     window.speechSynthesis.addEventListener('voiceschanged', onVoicesChanged)
 
-    // Fallback timeout in case event never fires (some browsers)
+    // Fallback — some browsers never fire voiceschanged
     setTimeout(() => {
       window.speechSynthesis.removeEventListener('voiceschanged', onVoicesChanged)
       resolve(window.speechSynthesis.getVoices())
@@ -48,26 +52,22 @@ async function pickVoice(): Promise<SpeechSynthesisVoice | null> {
   if (!voices.length) return null
 
   const preferred = getPreferredVoiceName()
-
-  // Use saved preference if it's still available on this device
   if (preferred) {
     const saved = voices.find(v => v.name === preferred)
     if (saved) return saved
   }
 
-  // Auto-pick: English voices only
   const english = voices.filter(v => v.lang.startsWith('en'))
   const pool = english.length > 0 ? english : voices
 
-  // Priority order — clearest voices for spelling
   const priorities = [
     (v: SpeechSynthesisVoice) => v.name.includes('Google UK English Female'),
     (v: SpeechSynthesisVoice) => v.name.includes('Google US English'),
     (v: SpeechSynthesisVoice) => v.name.includes('Google'),
-    (v: SpeechSynthesisVoice) => v.name.includes('Samantha'),   // macOS/iOS
-    (v: SpeechSynthesisVoice) => v.name.includes('Karen'),      // macOS
-    (v: SpeechSynthesisVoice) => v.name.includes('Zira'),       // Windows female
-    (v: SpeechSynthesisVoice) => v.name.includes('Hazel'),      // Windows UK
+    (v: SpeechSynthesisVoice) => v.name.includes('Samantha'),
+    (v: SpeechSynthesisVoice) => v.name.includes('Karen'),
+    (v: SpeechSynthesisVoice) => v.name.includes('Zira'),
+    (v: SpeechSynthesisVoice) => v.name.includes('Hazel'),
     (v: SpeechSynthesisVoice) => v.name.toLowerCase().includes('female'),
   ]
 
@@ -80,11 +80,34 @@ async function pickVoice(): Promise<SpeechSynthesisVoice | null> {
 }
 
 /**
- * Speaks a spelling bee word using the announcement format:
- * "Your word is... [word]. [word]."
+ * Build a SpeechSynthesisUtterance with the chosen voice applied.
+ */
+function makeUtterance(
+  text: string,
+  voice: SpeechSynthesisVoice | null,
+  rate: number,
+  pitch = 1,
+  volume = 1
+): SpeechSynthesisUtterance {
+  const u = new SpeechSynthesisUtterance(text)
+  if (voice) u.voice = voice
+  u.lang   = voice?.lang ?? 'en-GB'
+  u.rate   = rate
+  u.pitch  = pitch
+  u.volume = volume
+  return u
+}
+
+/**
+ * Speaks a spelling bee word as TWO separate queued utterances:
  *
- * The sentence context forces the TTS engine to treat
- * even 1-2 letter words as real words, not abbreviations.
+ *   Utterance 1 (rate 0.82): "Your word is: [word]."
+ *   Utterance 2 (rate 0.65): "[word]."
+ *
+ * Using two utterances prevents the TTS engine from re-processing the word
+ * the second time, which is what causes the "pronounced then spelled" bug.
+ * The sentence context in utterance 1 forces word-level pronunciation even
+ * for rare or long words like "abstemious".
  */
 export async function speakWord(word: string): Promise<void> {
   if (typeof window === 'undefined' || !window.speechSynthesis) return
@@ -94,25 +117,21 @@ export async function speakWord(word: string): Promise<void> {
   const clean = word.trim()
   const voice = await pickVoice()
 
-  // Delay slightly — cancel() needs a moment to fully stop
   setTimeout(() => {
-    // Option A: sentence wrapping fixes short word pronunciation
-    const announcement = `Your word is... ${clean}. ... ${clean}.`
+    // Utterance 1 — announcement with sentence context
+    const u1 = makeUtterance(`Your word is: ${clean}.`, voice, 0.82)
 
-    const u = new SpeechSynthesisUtterance(announcement)
-    if (voice) u.voice = voice
-    u.lang   = voice?.lang ?? 'en-GB'
-    u.rate   = 0.78
-    u.pitch  = 1
-    u.volume = 1
+    // Utterance 2 — word repeated slowly and clearly, standalone
+    const u2 = makeUtterance(clean, voice, 0.65)
 
-    window.speechSynthesis.speak(u)
-  }, 100)
+    window.speechSynthesis.speak(u1)
+    window.speechSynthesis.speak(u2)
+  }, 120)
 }
 
 /**
- * Repeats just the word twice — no announcement prefix.
- * Used for a "hear again" button.
+ * Repeats the word twice using two separate utterances.
+ * Used for the "Hear Again" / "Repeat" button.
  */
 export async function repeatWord(word: string): Promise<void> {
   if (typeof window === 'undefined' || !window.speechSynthesis) return
@@ -123,12 +142,10 @@ export async function repeatWord(word: string): Promise<void> {
   const voice = await pickVoice()
 
   setTimeout(() => {
-    const u = new SpeechSynthesisUtterance(`${clean}. ... ${clean}.`)
-    if (voice) u.voice = voice
-    u.lang   = voice?.lang ?? 'en-GB'
-    u.rate   = 0.68
-    u.pitch  = 1
-    u.volume = 1
-    window.speechSynthesis.speak(u)
-  }, 100)
+    const u1 = makeUtterance(clean, voice, 0.65)
+    const u2 = makeUtterance(clean, voice, 0.65)
+
+    window.speechSynthesis.speak(u1)
+    window.speechSynthesis.speak(u2)
+  }, 120)
 }
