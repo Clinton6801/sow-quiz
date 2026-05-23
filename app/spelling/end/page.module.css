@@ -1,0 +1,117 @@
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  text-align: center;
+}
+
+.headerEmoji {
+  font-size: 4rem;
+  margin-bottom: 10px;
+  animation: bounce 1.5s infinite alternate;
+}
+@keyframes bounce { from { transform: scale(1); } to { transform: scale(1.12) rotate(-3deg); } }
+
+.title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 8vw, 3.8rem);
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--text2);
+}
+
+/* Score card */
+.card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+}
+
+.gradeWrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.gradeCircle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.statItem {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.statNum { font-size: 1.5rem; font-weight: 900; line-height: 1; }
+.statLbl { font-size: 0.68rem; font-weight: 800; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+
+.summary {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+
+.savedNote {
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--green);
+  opacity: 0.7;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.backLink {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text3);
+  padding: 8px;
+  cursor: pointer;
+  transition: color 0.18s;
+}
+.backLink:hover { color: var(--text2); }
+
+@media (max-width: 480px) {
+  .page { padding: 28px 14px 48px; }
+  .card { padding: 20px 16px; }
+}

@@ -44,6 +44,18 @@ export default function HomePage() {
         <Link href="/setup" className="btn btn-primary btn-lg">🚀 Start Quiz</Link>
         <Link href="/leaderboard" className="btn btn-ghost">🏆 Leaderboard</Link>
       </div>
+
+      {/* Spelling Game CTA */}
+      <div className={styles.spellingCta}>
+        <Link href="/spelling" className={styles.spellingCard}>
+          <span className={styles.spellingIcon}>🔤</span>
+          <div className={styles.spellingText}>
+            <span className={styles.spellingTitle}>Spelling Game</span>
+            <span className={styles.spellingDesc}>Hear it · Spell it · Beat the clock</span>
+          </div>
+          <span className={styles.spellingArrow}>→</span>
+        </Link>
+      </div>
     </div>
   )
 }
