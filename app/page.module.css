@@ -116,3 +116,67 @@
   .card { width: 140px; padding: 22px 14px; }
   .identityText { text-align: center; }
 }
+
+/* ── Spelling Game CTA ── */
+.spellingCta {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.spellingCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg2);
+  border: 2px solid var(--gold);
+  border-radius: 20px;
+  padding: 18px 22px;
+  text-decoration: none;
+  transition: all 0.22s;
+  box-shadow: var(--shadow-gold);
+}
+.spellingCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(255,215,0,0.25);
+  background: rgba(255,215,0,0.06);
+}
+
+.spellingIcon {
+  font-size: 2.4rem;
+  flex-shrink: 0;
+}
+
+.spellingText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.spellingTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.spellingDesc {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.spellingArrow {
+  font-size: 1.4rem;
+  color: var(--gold);
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .spellingCard { padding: 14px 16px; gap: 12px; }
+  .spellingTitle { font-size: 1.2rem; }
+}

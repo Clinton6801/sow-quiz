@@ -14,7 +14,227 @@ import styles from './page.module.css'
 import VoicePicker from '../../components/ui/VoicePicker'
 
 const ADMIN_PASSWORD = 'sow2025'
-type AdminTab = 'quiz' | 'practice' | 'settings'
+type AdminTab = 'quiz' | 'practice' | 'spelling' | 'settings'
+
+// ── Spelling word types ──
+interface SpellingWord {
+  id: string
+  word: string
+  section: string
+  hint: string | null
+  created_at: string
+}
+
+// ── Spelling Words Tab ──────────────────────────────────────────────────────
+function SpellingWordsTab({ showToast }: { showToast: (msg: string, type: 'success' | 'error') => void }) {
+  const [words,       setWords]       = useState<SpellingWord[]>([])
+  const [loading,     setLoading]     = useState(false)
+  const [section,     setSection]     = useState<string>(SECTIONS[0])
+  const [newWord,     setNewWord]     = useState('')
+  const [newHint,     setNewHint]     = useState('')
+  const [saving,      setSaving]      = useState(false)
+  const [editingId,   setEditingId]   = useState<string | null>(null)
+  const [editVal,     setEditVal]     = useState({ word: '', hint: '' })
+  const [csvText,     setCsvText]     = useState('')
+  const [csvParsed,   setCsvParsed]   = useState<{ word: string; hint: string }[]>([])
+  const [csvImporting,setCsvImporting]= useState(false)
+  const [showCsv,     setShowCsv]     = useState(false)
+  const csvFileRef = useRef<HTMLInputElement>(null)
+
+  const loadWords = useCallback(async () => {
+    setLoading(true)
+    const { data } = await supabase
+      .from('spelling_words')
+      .select('*')
+      .eq('section', section)
+      .order('word', { ascending: true })
+    setWords((data ?? []) as SpellingWord[])
+    setLoading(false)
+  }, [section])
+
+  useEffect(() => { loadWords() }, [loadWords])
+
+  async function handleAdd() {
+    if (!newWord.trim()) { showToast('Enter a word', 'error'); return }
+    setSaving(true)
+    const { error } = await supabase.from('spelling_words').insert({
+      word: newWord.trim().toUpperCase(),
+      section,
+      hint: newHint.trim() || null,
+    })
+    if (error) { showToast('Error adding word', 'error') }
+    else { showToast('Word added!', 'success'); setNewWord(''); setNewHint(''); loadWords() }
+    setSaving(false)
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Delete this word?')) return
+    const { error } = await supabase.from('spelling_words').delete().eq('id', id)
+    if (error) showToast('Error deleting', 'error')
+    else { showToast('Deleted', 'success'); loadWords() }
+  }
+
+  function startEdit(w: SpellingWord) {
+    setEditingId(w.id)
+    setEditVal({ word: w.word, hint: w.hint ?? '' })
+  }
+
+  async function saveEdit(id: string) {
+    const { error } = await supabase.from('spelling_words').update({
+      word: editVal.word.trim().toUpperCase(),
+      hint: editVal.hint.trim() || null,
+    }).eq('id', id)
+    if (error) showToast('Error updating', 'error')
+    else { showToast('Updated!', 'success'); setEditingId(null); loadWords() }
+  }
+
+  function parseCsv(text: string) {
+    const lines = text.trim().split('\n').filter(l => l.trim())
+    const rows = lines.map(line => {
+      const cols: string[] = []
+      let cur = '', inQ = false
+      for (let i = 0; i < line.length; i++) {
+        if (line[i] === '"') { inQ = !inQ }
+        else if (line[i] === ',' && !inQ) { cols.push(cur.trim()); cur = '' }
+        else cur += line[i]
+      }
+      cols.push(cur.trim())
+      return cols
+    }).filter(r => r.length >= 1 && r[0])
+    setCsvParsed(rows.map(r => ({ word: r[0].toUpperCase(), hint: r[1] ?? '' })))
+  }
+
+  function handleCsvFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => { const text = ev.target?.result as string; setCsvText(text); parseCsv(text) }
+    reader.readAsText(file)
+  }
+
+  async function handleImportCsv() {
+    if (!csvParsed.length) return
+    setCsvImporting(true)
+    const rows = csvParsed.map(r => ({ word: r.word, section, hint: r.hint || null }))
+    const { error } = await supabase.from('spelling_words').insert(rows)
+    if (error) showToast('Import failed', 'error')
+    else { showToast(`✅ Imported ${rows.length} words!`, 'success'); setCsvText(''); setCsvParsed([]); setShowCsv(false); loadWords() }
+    setCsvImporting(false)
+  }
+
+  return (
+    <div>
+      {/* Section + CSV toggle */}
+      <div className="form-row" style={{ maxWidth: 540, marginBottom: 16 }}>
+        <div className="form-group">
+          <label className="form-label">Section</label>
+          <select value={section} onChange={e => setSection(e.target.value)}>
+            {SECTIONS.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div className="form-group" style={{ justifyContent: 'flex-end', paddingTop: 22 }}>
+          <button className={`btn btn-sm ${showCsv ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setShowCsv(t => !t)}>
+            📥 CSV Import
+          </button>
+        </div>
+      </div>
+
+      <div className={styles.stats}>
+        🔤 Spelling Words — <strong>{section}</strong> · <strong>{words.length}</strong> words
+      </div>
+
+      {/* CSV panel */}
+      {showCsv && (
+        <div className={styles.csvPanel}>
+          <h3 className={styles.csvTitle}>📥 Bulk Import Spelling Words</h3>
+          <p className={styles.csvHint}>
+            Format: <code>word, hint (optional)</code><br />
+            One word per line. No header row needed. Words will be uppercased automatically.
+          </p>
+          <div className={styles.csvActions}>
+            <button className="btn btn-ghost btn-sm" onClick={() => csvFileRef.current?.click()}>📂 Upload CSV</button>
+            <input ref={csvFileRef} type="file" accept=".csv,.txt" onChange={handleCsvFile} style={{ display: 'none' }} />
+          </div>
+          <textarea className={styles.csvTextarea} value={csvText}
+            onChange={e => { setCsvText(e.target.value); parseCsv(e.target.value) }}
+            placeholder={`ELEPHANT, a large African animal\nBUTTERFLY, a beautiful insect\nKNOWLEDGE`}
+            rows={5} />
+          {csvParsed.length > 0 && (
+            <div className={styles.csvPreview}>
+              <p className={styles.csvPreviewTitle}>✅ {csvParsed.length} words ready to import into <strong>{section}</strong></p>
+              <div className={styles.csvPreviewList}>
+                {csvParsed.slice(0, 5).map((r, i) => (
+                  <div key={i} className={styles.csvPreviewRow}>
+                    <span className={styles.csvPreviewQ}>{i + 1}. {r.word}</span>
+                    {r.hint && <span className={styles.csvPreviewA}>💡 {r.hint}</span>}
+                  </div>
+                ))}
+                {csvParsed.length > 5 && <p className={styles.csvMore}>…and {csvParsed.length - 5} more</p>}
+              </div>
+              <button className="btn btn-primary btn-sm" onClick={handleImportCsv} disabled={csvImporting}>
+                {csvImporting ? 'Importing…' : `⬆ Import ${csvParsed.length} Words`}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Word list */}
+      <div className={styles.list}>
+        {loading ? <p className={styles.listEmpty}>Loading…</p>
+          : words.length === 0 ? <p className={styles.listEmpty}>No words yet for this section.</p>
+          : words.map((w, i) => (
+            <div key={w.id} className={styles.item}>
+              {editingId === w.id ? (
+                <div className={styles.editForm}>
+                  <input className={styles.editInput} value={editVal.word}
+                    onChange={e => setEditVal(v => ({ ...v, word: e.target.value }))} placeholder="Word" />
+                  <input className={styles.editInput} value={editVal.hint}
+                    onChange={e => setEditVal(v => ({ ...v, hint: e.target.value }))} placeholder="Hint (optional)" />
+                  <div className={styles.editBtns}>
+                    <button className="btn btn-green btn-sm" onClick={() => saveEdit(w.id)}>Save</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => setEditingId(null)}>Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className={styles.qInfo}>
+                    <strong className={styles.qText}>{i + 1}. {w.word}</strong>
+                    {w.hint && <span className={styles.qHint}>💡 {w.hint}</span>}
+                  </div>
+                  <div className={styles.itemBtns}>
+                    <button className={styles.editBtn} onClick={() => startEdit(w)}>✏ Edit</button>
+                    <button className={styles.delBtn} onClick={() => handleDelete(w.id)}>Delete</button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))
+        }
+      </div>
+
+      {/* Add word form */}
+      <div className={styles.addForm}>
+        <h3 className={styles.addTitle}>➕ Add Spelling Word</h3>
+        <div className="form-row" style={{ marginBottom: 14 }}>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label className="form-label">Word</label>
+            <input type="text" value={newWord} onChange={e => setNewWord(e.target.value)}
+              placeholder="e.g. ELEPHANT" autoCapitalize="characters" />
+          </div>
+          <div className="form-group" style={{ flex: 2 }}>
+            <label className="form-label">Hint <span style={{ fontWeight: 400, color: 'var(--text2)' }}>(optional)</span></label>
+            <input type="text" value={newHint} onChange={e => setNewHint(e.target.value)}
+              placeholder="e.g. a large African animal with a trunk" />
+          </div>
+        </div>
+        <button className="btn btn-green btn-sm" onClick={handleAdd} disabled={saving}>
+          {saving ? 'Saving…' : '+ Add Word'}
+        </button>
+      </div>
+    </div>
+  )
+}
 
 // ── Edit question in place ──
 async function updateQuestion(id: string, question: string, answer: string) {
@@ -204,9 +424,11 @@ export default function AdminPage() {
       <div className={styles.topBar}>
         <h1 className={styles.title}>⚙ Admin Panel</h1>
         <div style={{ display: 'flex', gap: 8 }}>
+          {(tab === 'quiz' || tab === 'practice') && (
           <button className={`btn btn-sm ${csvTab ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setCsvTab(t => !t)}>
             📥 CSV Import
           </button>
+          )}
           <button className="btn btn-ghost btn-sm" onClick={handleLogout}>🔒 Lock</button>
         </div>
       </div>
@@ -219,12 +441,16 @@ export default function AdminPage() {
         <button className={`${styles.tab} ${tab === 'practice' ? styles.tabActive : ''}`} onClick={() => setTab('practice')}>
           📚 Practice Questions <span className={styles.tabCount}>{practiceQs.length}</span>
         </button>
+        <button className={`${styles.tab} ${tab === 'spelling' ? styles.tabActive : ''}`} onClick={() => setTab('spelling')}>
+          🔤 Spelling Words
+        </button>
         <button className={`${styles.tab} ${tab === 'settings' ? styles.tabActive : ''}`} onClick={() => setTab('settings')}>
           ⚙ Settings
         </button>
       </div>
 
-      {/* Filters */}
+      {/* Filters — only for quiz/practice tabs */}
+      {(tab === 'quiz' || tab === 'practice') && (
       <div className="form-row" style={{ maxWidth: 540, marginBottom: 16 }}>
         <div className="form-group">
           <label className="form-label">Section</label>
@@ -239,13 +465,16 @@ export default function AdminPage() {
           </select>
         </div>
       </div>
+      )}
 
+      {(tab === 'quiz' || tab === 'practice') && (
       <div className={styles.stats}>
         {tab === 'quiz' ? '🎮 Quiz' : '📚 Practice'} — <strong>{CATEGORY_ICONS[category]} {category}</strong> · <strong>{section}</strong> · <strong>{tab === 'quiz' ? quizQs.length : practiceQs.length}</strong> questions
       </div>
+      )}
 
-      {/* CSV Import panel */}
-      {csvTab && (
+      {/* CSV Import panel — quiz/practice only */}
+      {csvTab && (tab === 'quiz' || tab === 'practice') && (
         <div className={styles.csvPanel}>
           <h3 className={styles.csvTitle}>📥 Bulk Import via CSV</h3>
           <p className={styles.csvHint}>
@@ -331,6 +560,9 @@ export default function AdminPage() {
           </div>
         </>
       )}
+
+      {/* ── SPELLING TAB ── */}
+      {tab === 'spelling' && <SpellingWordsTab showToast={showToast} />}
 
       {/* ── SETTINGS TAB ── */}
       {tab === 'settings' && (
