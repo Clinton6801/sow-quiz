@@ -5,6 +5,7 @@ import { useGame } from '../../context/GameContext'
 import ScoreBoard from '../../components/quiz/ScoreBoard'
 import Round1Grid from '../../components/quiz/Round1Grid'
 import Round2FastFingers from '../../components/quiz/Round2FastFingers'
+import Round3Gauntlet from '../../components/quiz/Round3Gauntlet'
 import styles from './page.module.css'
 
 export default function QuizPage() {
@@ -116,7 +117,7 @@ export default function QuizPage() {
       <div className={styles.topBar}>
         <div>
           <h1 className={styles.roundTitle}>
-            {game.round === 'round1' ? 'Round 1 — Pick a Number' : 'Round 2 — Fastest Fingers'}
+            {game.round === 'round1' ? 'Round 1 — Pick a Number' : game.round === 'round2' ? 'Round 2 — Fastest Fingers' : 'Round 3 — Gauntlet'}
           </h1>
           <p className={styles.sectionLabel}>{game.section}</p>
         </div>
@@ -181,10 +182,20 @@ export default function QuizPage() {
             ))}
           </div>
 
-          <button className="btn btn-ghost btn-sm"
-            onClick={() => setRound(game.round === 'round1' ? 'round2' : 'round1')}>
-            Switch Round
-          </button>
+          <div className={styles.roundSwitcher}>
+            <button className={`btn btn-ghost btn-sm ${game.round === 'round1' ? styles.roundActive : ''}`}
+              onClick={() => setRound('round1')}>
+              Round 1
+            </button>
+            <button className={`btn btn-ghost btn-sm ${game.round === 'round2' ? styles.roundActive : ''}`}
+              onClick={() => setRound('round2')}>
+              Round 2
+            </button>
+            <button className={`btn btn-ghost btn-sm ${game.round === 'round3' ? styles.roundActive : ''}`}
+              onClick={() => setRound('round3')}>
+              Round 3
+            </button>
+          </div>
           <button className="btn btn-danger btn-sm" onClick={() => setShowEndScreen(true)}>
             🏁 End Quiz
           </button>
@@ -193,7 +204,9 @@ export default function QuizPage() {
 
       {game.round === 'round1'
         ? <Round1Grid timerSeconds={timerSeconds} />
-        : <Round2FastFingers />
+        : game.round === 'round2'
+        ? <Round2FastFingers />
+        : <Round3Gauntlet />
       }
     </div>
   )

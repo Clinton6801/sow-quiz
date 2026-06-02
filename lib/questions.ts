@@ -26,6 +26,8 @@ export interface Question {
   category: Category
   question: string
   answer: string
+  difficulty?: string
+  hint?: string
   created_at: string
 }
 
@@ -60,6 +62,8 @@ export async function addQuestion(q: {
   category: Category
   question: string
   answer: string
+  difficulty?: string
+  hint?: string
 }): Promise<void> {
   const { error } = await supabase.from('questions').insert([q])
   if (error) throw error
@@ -68,4 +72,20 @@ export async function addQuestion(q: {
 export async function deleteQuestion(id: string): Promise<void> {
   const { error } = await supabase.from('questions').delete().eq('id', id)
   if (error) throw error
+}
+
+export async function getQuestionsByDifficulty(
+  section: string,
+  difficulty: string,
+  category: string
+): Promise<Question[]> {
+  const { data, error } = await supabase
+    .from('questions')
+    .select('*')
+    .eq('section', section)
+    .eq('difficulty', difficulty)
+    .eq('category', category)
+    .order('created_at', { ascending: true })
+  if (error) throw error
+  return data as Question[]
 }

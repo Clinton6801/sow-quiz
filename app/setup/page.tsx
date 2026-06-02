@@ -194,6 +194,7 @@ function SetupForm() {
             <select value={round} onChange={e => setRound(e.target.value as Round)}>
               <option value="round1">Round 1 — Pick a Number</option>
               <option value="round2">Round 2 — Fastest Fingers</option>
+              <option value="round3">Round 3 — Gauntlet</option>
             </select>
           </div>
           <div className="form-group" style={{ maxWidth: 120 }}>

@@ -237,13 +237,41 @@ function SpellingWordsTab({ showToast }: { showToast: (msg: string, type: 'succe
 }
 
 // ── Edit question in place ──
-async function updateQuestion(id: string, question: string, answer: string) {
-  const { error } = await supabase.from('questions').update({ question, answer }).eq('id', id)
+async function updateQuestion(id: string, question: string, answer: string, difficulty?: string, hint?: string) {
+  const { error } = await supabase.from('questions').update({ question, answer, difficulty: difficulty || null, hint: hint || null }).eq('id', id)
   if (error) throw error
 }
 async function updatePracticeQuestion(id: string, question: string, answer: string, hint: string) {
   const { error } = await supabase.from('practice_questions').update({ question, answer, hint }).eq('id', id)
   if (error) throw error
+}
+async function updateQuestionDifficulty(ids: string[], difficulty: string) {
+  const { error } = await supabase.from('questions').update({ difficulty }).in('id', ids)
+  if (error) throw error
+}
+async function deleteAllQuestions() {
+  const response = await fetch('/api/admin-delete-questions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ deleteAll: true })
+  })
+  if (!response.ok) {
+    const data = await response.json()
+    throw new Error(data.error || 'Failed to delete all questions')
+  }
+  return response.json()
+}
+async function deleteQuestionsByIds(ids: string[]) {
+  const response = await fetch('/api/admin-delete-questions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids })
+  })
+  if (!response.ok) {
+    const data = await response.json()
+    throw new Error(data.error || 'Failed to delete questions')
+  }
+  return response.json()
 }
 
 export default function AdminPage() {
@@ -277,9 +305,11 @@ export default function AdminPage() {
   const [quizLoad, setQuizLoad]  = useState(false)
   const [qNewQ,    setQNewQ]     = useState('')
   const [qNewA,    setQNewA]     = useState('')
+  const [qNewDiff, setQNewDiff]  = useState('')
+  const [qNewHint, setQNewHint]  = useState('')
   const [qSaving,  setQSaving]   = useState(false)
   const [editingQ, setEditingQ]  = useState<string | null>(null)
-  const [editQVal, setEditQVal]  = useState({ q: '', a: '' })
+  const [editQVal, setEditQVal]  = useState({ q: '', a: '', diff: '', hint: '' })
 
   // Practice questions
   const [practiceQs,   setPracticeQs]   = useState<PracticeQuestion[]>([])
@@ -294,9 +324,22 @@ export default function AdminPage() {
   // CSV import
   const [csvTab,       setCsvTab]       = useState(false)
   const [csvText,      setCsvText]      = useState('')
-  const [csvParsed,    setCsvParsed]    = useState<{q:string;a:string;hint?:string}[]>([])
+  const [csvParsed,    setCsvParsed]    = useState<{q:string;a:string;hint?:string;difficulty?:string}[]>([])
   const [csvImporting, setCsvImporting] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+
+  // Bulk tagger
+  const [showBulkTagger, setShowBulkTagger] = useState(false)
+  const [bulkDiffFilter, setBulkDiffFilter] = useState<string>('')
+  const [selectedQIds, setSelectedQIds] = useState<Set<string>>(new Set())
+  const [bulkDifficulty, setBulkDifficulty] = useState<string>('')
+  const [bulkApplying, setBulkApplying] = useState(false)
+
+  // Bulk delete
+  const [showDeleteZone, setShowDeleteZone] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleteAllConfirm, setDeleteAllConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const loadQuiz = useCallback(async () => {
     if (!authed) return
@@ -320,19 +363,35 @@ export default function AdminPage() {
 
   // Quiz CRUD
   const handleAddQuiz = async () => {
-    if (!qNewQ.trim() || !qNewA.trim()) { showToast('Fill both fields', 'error'); return }
+    if (!qNewQ.trim() || !qNewA.trim()) { showToast('Fill question and answer', 'error'); return }
     setQSaving(true)
-    try { await addQuestion({ section, category, question: qNewQ.trim(), answer: qNewA.trim() }); showToast('Added!', 'success'); setQNewQ(''); setQNewA(''); loadQuiz() }
-    catch { showToast('Error', 'error') } finally { setQSaving(false) }
+    try { 
+      await addQuestion({ 
+        section, 
+        category, 
+        question: qNewQ.trim(), 
+        answer: qNewA.trim(),
+        ...(qNewDiff ? { difficulty: qNewDiff } : {}),
+        ...(qNewHint ? { hint: qNewHint } : {})
+      }); 
+      showToast('Added!', 'success'); 
+      setQNewQ(''); 
+      setQNewA(''); 
+      setQNewDiff('');
+      setQNewHint('');
+      loadQuiz() 
+    }
+    catch { showToast('Error', 'error') } 
+    finally { setQSaving(false) }
   }
   const handleDeleteQuiz = async (id: string) => {
     if (!confirm('Delete this question?')) return
     try { await deleteQuestion(id); showToast('Deleted', 'success'); loadQuiz() }
     catch { showToast('Error', 'error') }
   }
-  const startEditQuiz = (q: Question) => { setEditingQ(q.id); setEditQVal({ q: q.question, a: q.answer }) }
+  const startEditQuiz = (q: Question) => { setEditingQ(q.id); setEditQVal({ q: q.question, a: q.answer, diff: q.difficulty || '', hint: q.hint || '' }) }
   const saveEditQuiz = async (id: string) => {
-    try { await updateQuestion(id, editQVal.q, editQVal.a); showToast('Updated!', 'success'); setEditingQ(null); loadQuiz() }
+    try { await updateQuestion(id, editQVal.q, editQVal.a, editQVal.diff || undefined, editQVal.hint || undefined); showToast('Updated!', 'success'); setEditingQ(null); loadQuiz() }
     catch { showToast('Error', 'error') }
   }
 
@@ -369,7 +428,35 @@ export default function AdminPage() {
       cols.push(cur.trim())
       return cols
     }).filter(r => r.length >= 2 && r[0] && r[1])
-    setCsvParsed(rows.map(r => ({ q: r[0], a: r[1], hint: r[2] ?? '' })))
+    setCsvParsed(rows.map(r => {
+      // Support optional difficulty and hint columns (case-insensitive)
+      // Format: question, answer, [hint], [difficulty]
+      let hint = ''
+      let difficulty = ''
+      
+      if (tab === 'quiz') {
+        // For quiz: question, answer, [hint], [difficulty]
+        // Columns can be in any order, we detect by content
+        hint = r[2] ?? ''
+        difficulty = r[3] ? r[3].toLowerCase().trim() : ''
+        
+        // Validate difficulty if present
+        const validDifficulties = ['easy', 'moderate', 'hard', 'champion']
+        if (difficulty && !validDifficulties.includes(difficulty)) {
+          difficulty = ''
+        }
+      } else {
+        // For practice: question, answer, [hint]
+        hint = r[2] ?? ''
+      }
+      
+      return { 
+        q: r[0], 
+        a: r[1], 
+        hint: hint,
+        difficulty: difficulty
+      }
+    }))
   }
 
   const handleCSVFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -385,11 +472,29 @@ export default function AdminPage() {
     setCsvImporting(true)
     try {
       const table = tab === 'quiz' ? 'questions' : 'practice_questions'
-      const rows = csvParsed.map(r => ({
-        section, category,
-        question: r.q, answer: r.a,
-        ...(tab === 'practice' ? { hint: r.hint ?? '' } : {})
-      }))
+      const rows = csvParsed.map(r => {
+        const row: any = {
+          section, category,
+          question: r.q, 
+          answer: r.a,
+        }
+        
+        // Add hint if present and not empty
+        if (r.hint) {
+          row.hint = r.hint
+        } else if (tab === 'practice') {
+          row.hint = null
+        }
+        
+        // Add difficulty if present and not empty (quiz only)
+        if (tab === 'quiz' && r.difficulty) {
+          row.difficulty = r.difficulty
+        } else if (tab === 'quiz') {
+          row.difficulty = null
+        }
+        
+        return row
+      })
       const { error } = await supabase.from(table).insert(rows)
       if (error) throw error
       showToast(`✅ Imported ${rows.length} questions!`, 'success')
@@ -421,6 +526,23 @@ export default function AdminPage() {
 
   return (
     <div className="page" style={{ maxWidth: 920 }}>
+      {(!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) && (
+        <div style={{
+          width: '100%',
+          backgroundColor: '#FFD70022',
+          border: '2px solid #FFD700',
+          borderRadius: 'var(--radius-md, 8px)',
+          padding: '12px',
+          marginBottom: '16px',
+          color: '#fff',
+          fontSize: '0.95rem',
+          fontWeight: 500,
+          lineHeight: 1.4
+        }}>
+          ⚠️ Supabase is not configured. Open <code style={{ fontFamily: 'monospace', backgroundColor: 'rgba(0,0,0,0.2)', padding: '2px 6px', borderRadius: '4px' }}>.env.local</code> and add your <strong>NEXT_PUBLIC_SUPABASE_URL</strong>, <strong>NEXT_PUBLIC_SUPABASE_ANON_KEY</strong> and <strong>SUPABASE_SERVICE_ROLE_KEY</strong> values before using the admin panel.
+        </div>
+      )}
+
       <div className={styles.topBar}>
         <h1 className={styles.title}>⚙ Admin Panel</h1>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -478,8 +600,8 @@ export default function AdminPage() {
         <div className={styles.csvPanel}>
           <h3 className={styles.csvTitle}>📥 Bulk Import via CSV</h3>
           <p className={styles.csvHint}>
-            Format: <code>question, answer{tab === 'practice' ? ', hint (optional)' : ''}</code><br />
-            One question per line. No header row needed.
+            Format: <code>question, answer{tab === 'practice' ? ', hint (optional)' : ', hint (optional), difficulty (optional: easy/moderate/hard/champion)'}</code><br />
+            One question per line. No header row needed. Difficulty values are case-insensitive. Missing or blank columns remain null.
           </p>
           <div className={styles.csvActions}>
             <button className="btn btn-ghost btn-sm" onClick={() => fileRef.current?.click()}>📂 Upload CSV File</button>
@@ -487,7 +609,7 @@ export default function AdminPage() {
           </div>
           <textarea className={styles.csvTextarea} value={csvText}
             onChange={e => { setCsvText(e.target.value); parseCSV(e.target.value) }}
-            placeholder={`What is 2 + 2, 4\nSpell "beautiful", beautiful\nWho is the president of Nigeria, Bola Tinubu`}
+            placeholder={tab === 'quiz' ? `What is 2 + 2, 4, , easy\nSpell "beautiful", beautiful, a nice word, moderate\nWho is the president of Nigeria, Bola Tinubu` : `What is 2 + 2, 4, Think about fingers\nSpell "beautiful", beautiful, a nice word`}
             rows={6} />
           {csvParsed.length > 0 && (
             <div className={styles.csvPreview}>
@@ -497,6 +619,8 @@ export default function AdminPage() {
                   <div key={i} className={styles.csvPreviewRow}>
                     <span className={styles.csvPreviewQ}>{i + 1}. {r.q}</span>
                     <span className={styles.csvPreviewA}>→ {r.a}</span>
+                    {r.hint && <span style={{ fontSize: '0.75rem', color: 'var(--cyan)' }}>💡 {r.hint}</span>}
+                    {tab === 'quiz' && r.difficulty && <span style={{ fontSize: '0.75rem', color: 'var(--gold)' }}>⭐ {r.difficulty}</span>}
                   </div>
                 ))}
                 {csvParsed.length > 5 && <p className={styles.csvMore}>...and {csvParsed.length - 5} more</p>}
@@ -512,15 +636,99 @@ export default function AdminPage() {
       {/* ── QUIZ TAB ── */}
       {tab === 'quiz' && (
         <>
+          {/* Bulk tagger */}
+          <div style={{ marginBottom: 20 }}>
+            <button className="btn btn-sm btn-ghost" onClick={() => setShowBulkTagger(!showBulkTagger)}>
+              🏷 {showBulkTagger ? 'Hide' : 'Show'} Bulk Tagger
+            </button>
+            {showBulkTagger && (
+              <div className={styles.bulkTaggerPanel}>
+                <h3 className={styles.bulkTaggerTitle}>🏷 Bulk Difficulty Tagger</h3>
+                <p className={styles.bulkTaggerDesc}>
+                  Filter questions by section, category, or difficulty status, then select and apply a new difficulty level to multiple questions at once.
+                </p>
+                <div className="form-row" style={{ marginBottom: 14 }}>
+                  <div className="form-group">
+                    <label className="form-label">Filter by Difficulty</label>
+                    <select value={bulkDiffFilter} onChange={e => { setBulkDiffFilter(e.target.value); setSelectedQIds(new Set()) }}>
+                      <option value="">All Questions</option>
+                      <option value="untagged">Untagged Only</option>
+                      <option value="easy">Easy</option>
+                      <option value="moderate">Moderate</option>
+                      <option value="hard">Hard</option>
+                      <option value="champion">Champion</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Set Difficulty To</label>
+                    <select value={bulkDifficulty} onChange={e => setBulkDifficulty(e.target.value)}>
+                      <option value="">— Select —</option>
+                      <option value="easy">Easy</option>
+                      <option value="moderate">Moderate</option>
+                      <option value="hard">Hard</option>
+                      <option value="champion">Champion</option>
+                    </select>
+                  </div>
+                </div>
+                <div className={styles.bulkSelectAll}>
+                  <input type="checkbox" id="selectAllBulk" 
+                    checked={selectedQIds.size > 0 && selectedQIds.size === quizQs.filter(q => !bulkDiffFilter || (bulkDiffFilter === 'untagged' ? !q.difficulty : q.difficulty === bulkDiffFilter)).length}
+                    onChange={e => {
+                      if (e.target.checked) {
+                        const filtered = quizQs.filter(q => !bulkDiffFilter || (bulkDiffFilter === 'untagged' ? !q.difficulty : q.difficulty === bulkDiffFilter))
+                        setSelectedQIds(new Set(filtered.map(q => q.id)))
+                      } else {
+                        setSelectedQIds(new Set())
+                      }
+                    }}
+                  />
+                  <label htmlFor="selectAllBulk" className={styles.bulkSelectAllLabel}>
+                    Select All ({quizQs.filter(q => !bulkDiffFilter || (bulkDiffFilter === 'untagged' ? !q.difficulty : q.difficulty === bulkDiffFilter)).length})
+                  </label>
+                </div>
+                <button className="btn btn-primary btn-sm" onClick={async () => {
+                  if (!bulkDifficulty || selectedQIds.size === 0) { showToast('Select questions and difficulty', 'error'); return }
+                  setBulkApplying(true)
+                  try {
+                    await updateQuestionDifficulty(Array.from(selectedQIds), bulkDifficulty)
+                    const selectedCount = selectedQIds.size
+                    showToast(`✅ Updated ${selectedCount} ${selectedCount === 1 ? 'question' : 'questions'} to ${bulkDifficulty}!`, 'success')
+                    setSelectedQIds(new Set())
+                    setBulkDifficulty('')
+                    loadQuiz()
+                  } catch { showToast('Error updating', 'error') }
+                  finally { setBulkApplying(false) }
+                }} disabled={bulkApplying || selectedQIds.size === 0 || !bulkDifficulty}>
+                  {bulkApplying ? 'Applying…' : `Apply to ${selectedQIds.size} Selected`}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Table header */}
+          <div className={styles.tableHeader}>
+            <div className={styles.tableCol} style={{ flex: 1 }}>Question</div>
+            <div className={styles.tableCol} style={{ width: 100 }}>Difficulty</div>
+            <div className={styles.tableCol} style={{ width: 80 }}>Actions</div>
+          </div>
+
           <div className={styles.list}>
             {quizLoad ? <p className={styles.listEmpty}>Loading…</p>
               : quizQs.length === 0 ? <p className={styles.listEmpty}>No questions yet.</p>
-              : quizQs.map((q, i) => (
+              : quizQs.filter(q => !bulkDiffFilter || (bulkDiffFilter === 'untagged' ? !q.difficulty : q.difficulty === bulkDiffFilter)).map((q, i) => (
                 <div key={q.id} className={styles.item}>
                   {editingQ === q.id ? (
                     <div className={styles.editForm}>
-                      <textarea className={styles.editInput} value={editQVal.q} onChange={e => setEditQVal(v => ({ ...v, q: e.target.value }))} rows={2} />
+                      <textarea className={styles.editInput} value={editQVal.q} onChange={e => setEditQVal(v => ({ ...v, q: e.target.value }))} rows={2} placeholder="Question" />
                       <input className={styles.editInput} value={editQVal.a} onChange={e => setEditQVal(v => ({ ...v, a: e.target.value }))} placeholder="Answer" />
+                      <select className={styles.editInput} value={editQVal.diff} onChange={e => setEditQVal(v => ({ ...v, diff: e.target.value }))}>
+                        <option value="">None</option>
+                        <option value="easy">Easy</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="hard">Hard</option>
+                        <option value="champion">Champion</option>
+                      </select>
+                      <input className={styles.editInput} value={editQVal.hint} onChange={e => setEditQVal(v => ({ ...v, hint: e.target.value }))} placeholder="Hint (optional)" />
                       <div className={styles.editBtns}>
                         <button className="btn btn-green btn-sm" onClick={() => saveEditQuiz(q.id)}>Save</button>
                         <button className="btn btn-ghost btn-sm" onClick={() => setEditingQ(null)}>Cancel</button>
@@ -528,9 +736,33 @@ export default function AdminPage() {
                     </div>
                   ) : (
                     <>
-                      <div className={styles.qInfo}>
-                        <strong className={styles.qText}>{i + 1}. {q.question}</strong>
-                        <span className={styles.qAns}>✓ {q.answer}</span>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', flex: 1 }}>
+                        {showBulkTagger && (
+                          <input type="checkbox" 
+                            checked={selectedQIds.has(q.id)}
+                            onChange={e => {
+                              const newSet = new Set(selectedQIds)
+                              if (e.target.checked) newSet.add(q.id)
+                              else newSet.delete(q.id)
+                              setSelectedQIds(newSet)
+                            }}
+                            style={{ marginTop: 4, flexShrink: 0 }}
+                          />
+                        )}
+                        <div className={styles.qInfo} style={{ flex: 1 }}>
+                          <strong className={styles.qText}>{i + 1}. {q.question}</strong>
+                          <span className={styles.qAns}>✓ {q.answer}</span>
+                          {q.hint && <span className={styles.qHint}>💡 {q.hint}</span>}
+                        </div>
+                      </div>
+                      <div style={{ width: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        {q.difficulty ? (
+                          <span className={styles.diffBadge} data-difficulty={q.difficulty}>
+                            {q.difficulty.toUpperCase()}
+                          </span>
+                        ) : (
+                          <span className={styles.diffBadgeUntagged}>—</span>
+                        )}
                       </div>
                       <div className={styles.itemBtns}>
                         <button className={styles.editBtn} onClick={() => startEditQuiz(q)}>✏ Edit</button>
@@ -554,9 +786,141 @@ export default function AdminPage() {
                 <textarea value={qNewA} onChange={e => setQNewA(e.target.value)} placeholder="Correct answer…" rows={3} />
               </div>
             </div>
+            <div className="form-row" style={{ marginBottom: 14 }}>
+              <div className="form-group">
+                <label className="form-label">Difficulty <span style={{ fontWeight: 400, color: 'var(--text2)' }}>(optional)</span></label>
+                <select value={qNewDiff} onChange={e => setQNewDiff(e.target.value)}>
+                  <option value="">None</option>
+                  <option value="easy">Easy</option>
+                  <option value="moderate">Moderate</option>
+                  <option value="hard">Hard</option>
+                  <option value="champion">Champion</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Hint <span style={{ fontWeight: 400, color: 'var(--text2)' }}>(optional)</span></label>
+                <input type="text" value={qNewHint} onChange={e => setQNewHint(e.target.value)} placeholder="e.g. Think about water…" />
+              </div>
+            </div>
             <button className="btn btn-green btn-sm" onClick={handleAddQuiz} disabled={qSaving}>
               {qSaving ? 'Saving…' : '+ Add Question'}
             </button>
+          </div>
+
+          {/* Danger zone */}
+          <div style={{ marginTop: 32, paddingTop: 24, borderTop: '2px solid #C8102E33' }}>
+            <button className="btn btn-sm btn-ghost" onClick={() => setShowDeleteZone(!showDeleteZone)} style={{ color: '#C8102E', fontWeight: 700 }}>
+              ⚠ {showDeleteZone ? 'Hide' : 'Show'} Danger Zone
+            </button>
+            {showDeleteZone && (
+              <div className={styles.dangerZone}>
+                <h3 className={styles.dangerZoneTitle}>🗑 Danger Zone</h3>
+                <p className={styles.dangerZoneDesc}>Permanent deletion of questions. These actions cannot be undone.</p>
+                
+                {/* Delete selected */}
+                <div className={styles.dangerZoneSection}>
+                  <div>
+                    <h4 style={{ color: 'var(--text)', fontSize: '0.95rem', fontWeight: 700, marginBottom: 6 }}>Delete Selected Questions</h4>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text2)', marginBottom: 12 }}>
+                      {selectedQIds.size === 0 
+                        ? 'Select questions using the bulk tagger to delete them.'
+                        : `${selectedQIds.size} question${selectedQIds.size === 1 ? '' : 's'} selected for deletion.`
+                      }
+                    </p>
+                  </div>
+                  <button 
+                    className={`btn btn-sm ${selectedQIds.size > 0 ? 'btn-danger' : 'btn-ghost'}`}
+                    onClick={() => {
+                      if (selectedQIds.size === 0) { showToast('Select questions first', 'error'); return }
+                      setDeleteConfirmText('') // Use this for selected confirmation
+                      // Show confirmation modal for selected
+                      if (confirm(`Are you sure? This will delete ${selectedQIds.size} question${selectedQIds.size === 1 ? '' : 's'} permanently. This cannot be undone.`)) {
+                        (async () => {
+                          setDeleting(true)
+                          try {
+                            await deleteQuestionsByIds(Array.from(selectedQIds))
+                            showToast(`✅ Deleted ${selectedQIds.size} question${selectedQIds.size === 1 ? '' : 's'}!`, 'success')
+                            setSelectedQIds(new Set())
+                            loadQuiz()
+                          } catch (err: any) { showToast(err.message || 'Error deleting', 'error') }
+                          finally { setDeleting(false) }
+                        })()
+                      }
+                    }}
+                    disabled={deleting || selectedQIds.size === 0}
+                    style={{ minWidth: 160 }}
+                  >
+                    {deleting ? 'Deleting…' : `Delete ${selectedQIds.size} Selected`}
+                  </button>
+                </div>
+
+                {/* Delete all */}
+                <div className={styles.dangerZoneSection} style={{ borderTop: '1px solid #C8102E44', paddingTop: 16 }}>
+                  <div>
+                    <h4 style={{ color: 'var(--text)', fontSize: '0.95rem', fontWeight: 700, marginBottom: 6 }}>Delete All Questions</h4>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text2)', marginBottom: 12 }}>
+                      Delete ALL questions in <strong>{section} / {category}</strong>. Type "DELETE" to confirm.
+                    </p>
+                  </div>
+                  {!deleteAllConfirm ? (
+                    <button 
+                      className="btn btn-sm btn-danger"
+                      onClick={() => setDeleteAllConfirm(true)}
+                      style={{ minWidth: 160 }}
+                    >
+                      Delete All
+                    </button>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', minWidth: 300 }}>
+                      <input 
+                        type="text" 
+                        placeholder="Type DELETE" 
+                        value={deleteConfirmText} 
+                        onChange={e => setDeleteConfirmText(e.target.value)} 
+                        autoFocus
+                        style={{ 
+                          flex: 1, 
+                          padding: '8px 12px', 
+                          borderRadius: 'var(--radius-sm)', 
+                          border: deleteConfirmText === 'DELETE' ? '2px solid var(--green)' : '2px solid var(--danger)',
+                          background: 'var(--surface)',
+                          color: 'var(--text)',
+                          fontSize: '0.9rem',
+                          fontFamily: 'monospace',
+                          fontWeight: 700
+                        }}
+                      />
+                      <button 
+                        className="btn btn-sm btn-danger"
+                        onClick={async () => {
+                          if (deleteConfirmText !== 'DELETE') { showToast('Type DELETE exactly', 'error'); return }
+                          setDeleting(true)
+                          try {
+                            await deleteAllQuestions()
+                            showToast('✅ All questions deleted!', 'success')
+                            setDeleteAllConfirm(false)
+                            setDeleteConfirmText('')
+                            loadQuiz()
+                          } catch (err: any) { showToast(err.message || 'Error deleting', 'error') }
+                          finally { setDeleting(false) }
+                        }} 
+                        disabled={deleting || deleteConfirmText !== 'DELETE'}
+                        style={{ minWidth: 120 }}
+                      >
+                        {deleting ? 'Deleting…' : 'Confirm'}
+                      </button>
+                      <button 
+                        className="btn btn-sm btn-ghost"
+                        onClick={() => { setDeleteAllConfirm(false); setDeleteConfirmText('') }}
+                        disabled={deleting}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </>
       )}

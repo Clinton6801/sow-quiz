@@ -15,6 +15,7 @@ export interface Room {
   double_points: boolean
   pts_per_q: number
   categories: string[]
+  show_hint: boolean
   created_at: string
 }
 
@@ -23,6 +24,7 @@ export interface QuestionPayload {
   question: string
   answer: string
   category: string
+  hint?: string
 }
 
 export interface Contestant {
@@ -50,7 +52,7 @@ export async function createRoom(hostId: string, opts: {
     .from('rooms')
     .insert([{ code, host_id: hostId, section: opts.section, status: 'waiting',
       pts_per_q: opts.ptsPerQ, timer_seconds: opts.timerSeconds,
-      categories: opts.categories, double_points: false }])
+      categories: opts.categories, double_points: false, show_hint: false }])
     .select().single()
   if (error) throw error
   return data as Room

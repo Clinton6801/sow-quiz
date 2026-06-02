@@ -86,6 +86,25 @@
 }
 .listEmpty { color: var(--text2); font-style: italic; padding: 16px; font-size: 0.88rem; }
 
+.tableHeader {
+  display: flex;
+  gap: 10px;
+  padding: 10px 13px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tableCol {
+  display: flex;
+  align-items: center;
+}
+
 .item {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -100,6 +119,51 @@
 .qText  { display: block; font-size: 0.9rem; color: var(--text); word-break: break-word; }
 .qAns   { display: block; font-size: 0.76rem; color: var(--green); font-weight: 700; margin-top: 3px; }
 .qHint  { display: block; font-size: 0.74rem; color: var(--cyan); font-weight: 600; margin-top: 3px; font-style: italic; }
+
+.diffBadge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 75px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.diffBadge[data-difficulty="easy"] {
+  background-color: rgba(0, 230, 118, 0.15);
+  color: #00e676;
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+.diffBadge[data-difficulty="moderate"] {
+  background-color: rgba(255, 215, 0, 0.15);
+  color: #FFD700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+.diffBadge[data-difficulty="hard"] {
+  background-color: rgba(255, 109, 0, 0.15);
+  color: #FF6D00;
+  border: 1px solid rgba(255, 109, 0, 0.3);
+}
+.diffBadge[data-difficulty="champion"] {
+  background-color: rgba(200, 16, 46, 0.15);
+  color: #C8102E;
+  border: 1px solid rgba(200, 16, 46, 0.3);
+}
+.diffBadgeUntagged {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text3);
+  text-align: center;
+  min-width: 75px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  letter-spacing: 0.3px;
+}
 
 .delBtn {
   background: rgba(255,23,68,0.1);
@@ -197,3 +261,134 @@
 .csvPreviewQ     { color: var(--text); flex: 1; }
 .csvPreviewA     { color: var(--green); font-weight: 700; }
 .csvMore         { font-size: 0.76rem; color: var(--text2); font-style: italic; }
+
+/* Bulk tagger */
+.bulkTaggerPanel { background: var(--surface); border: 1.5px solid var(--gold); border-radius: 16px; padding: 16px; margin-top: 12px; margin-bottom: 20px; }
+.bulkTaggerTitle { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--cyan); margin-bottom: 12px; }
+.bulkTaggerDesc { font-size: 0.82rem; color: var(--text2); margin-bottom: 16px; line-height: 1.5; }
+.bulkSelectAll { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; padding: 10px 12px; background: var(--surface2); border-radius: 8px; }
+.bulkSelectAll input[type="checkbox"] { flex-shrink: 0; margin-top: 0; }
+.bulkSelectAllLabel { cursor: pointer; margin-bottom: 0; font-size: 0.9rem; font-weight: 600; color: var(--text); }
+
+/* Danger Zone */
+.dangerZoneContainer { margin-top: 32px; padding-top: 24px; border-top: 2px solid rgba(200, 16, 46, 0.2); }
+.dangerZoneToggle { color: var(--danger); transition: all 0.18s; }
+.dangerZoneToggle:hover { opacity: 0.8; }
+.dangerZonePanel { 
+  margin-top: 16px; 
+  padding: 20px; 
+  border: 2px solid #C8102E; 
+  border-radius: var(--radius-sm); 
+  background: rgba(200, 16, 46, 0.08);
+}
+.dangerZoneTitle { 
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem; 
+  color: #C8102E; 
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+.dangerZoneSection { margin-bottom: 20px; }
+.dangerZoneSection:last-child { margin-bottom: 0; }
+.dangerZoneSectionLabel { 
+  font-size: 0.9rem; 
+  font-weight: 600;
+  margin-bottom: 10px; 
+  color: var(--text2); 
+}
+.dangerZoneActions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.confirmInput { 
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  transition: border-color 0.18s;
+}
+.confirmInput:focus { 
+  outline: none; 
+  border-color: #C8102E;
+}
+.dangerBtn {
+  background: #C8102E;
+  border: 1px solid #C8102E;
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.dangerBtn:hover:not(:disabled) { 
+  background: #a00a23;
+  border-color: #a00a23;
+  box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
+}
+.dangerBtn:disabled { 
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .dangerZonePanel { padding: 16px; }
+  .dangerZoneActions { flex-direction: column; }
+  .confirmInput { min-width: auto; }
+  .dangerBtn { width: 100%; }
+}
+
+/* Danger zone */
+.dangerZone {
+  background: rgba(200, 16, 46, 0.05);
+  border: 2px solid #C8102E;
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-top: 16px;
+}
+.dangerZoneTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: #C8102E;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+.dangerZoneDesc {
+  font-size: 0.82rem;
+  color: var(--text2);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.dangerZoneSection {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.dangerZoneSection > div {
+  flex: 1;
+  min-width: 0;
+}
+.dangerZoneSection button {
+  flex-shrink: 0;
+  margin-top: 20px;
+}
+
+@media (max-width: 640px) {
+  .dangerZone { padding: 16px; }
+  .dangerZoneSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .dangerZoneSection button {
+    width: 100%;
+    margin-top: 12px;
+  }
+}
+

@@ -1,0 +1,406 @@
+.wrap {
+  max-width: 860px;
+  width: 100%;
+}
+
+/* ── SETUP CARD ── */
+.setupCard {
+  background: var(--bg2);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 24px;
+  margin-bottom: 24px;
+}
+
+.setupTitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: var(--gold);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* ── CATEGORY GRID ── */
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.categoryBtn {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text);
+}
+
+.categoryBtn:hover {
+  background: var(--surface2);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.categoryIcon {
+  font-size: 2.4rem;
+}
+
+.categoryName {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ── TOP BAR ── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.stageIndicator {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.stageNode {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 900;
+  transition: all 0.3s;
+}
+
+.categoryLabel {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+  min-width: 120px;
+}
+
+.participantLabel {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  background: rgba(0, 229, 255, 0.1);
+  border: 1px solid #00e5ff;
+  border-radius: 6px;
+}
+
+/* ── POINTS BADGE ── */
+.pointsBadge {
+  background: var(--gold);
+  color: #000;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* ── COUNTER ── */
+.counter {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text2);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* ── QUESTION BOX ── */
+.qBox {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.qCat {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text2);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.qText {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.placeholder {
+  color: var(--text3);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ── SPELLING ── */
+.spellingWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spellingLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.spellingWord {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: transparent;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  letter-spacing: 2px;
+  text-align: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  user-select: none;
+  transition: all 0.3s;
+}
+
+.spellingWord.unblurred {
+  color: var(--gold);
+  text-shadow: none;
+}
+
+.blurHint {
+  font-size: 0.8rem;
+  color: var(--text3);
+  text-align: center;
+  font-style: italic;
+}
+
+.audioBtn {
+  background: rgba(0, 230, 118, 0.1);
+  border: 1.5px solid #00e676;
+  color: #00e676;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: center;
+}
+
+.audioBtn:hover {
+  background: rgba(0, 230, 118, 0.2);
+}
+
+/* ── HINT BOX ── */
+.hintBox {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1.5px solid var(--gold);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--gold);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ── TIMER ── */
+.timerWrap {
+  height: 6px;
+  background: var(--surface2);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.timerBar {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.1s linear, background 0.2s;
+}
+
+/* ── BUZZ BUTTONS ── */
+.buzzRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.buzzBtn {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.buzzBtn:hover:not(:disabled) {
+  border-color: var(--tc, var(--gold));
+  background: rgba(var(--tc-rgb, 255, 215, 0), 0.08);
+  transform: translateY(-2px);
+}
+
+.buzzBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buzzBtn.buzzed {
+  background: var(--tc, var(--gold));
+  border-color: var(--tc, var(--gold));
+  color: #000;
+}
+
+.buzzIcon {
+  font-size: 1.4rem;
+}
+
+.buzzLabel {
+  font-size: 0.8rem;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── JUDGE BOX ── */
+.judgeBox {
+  background: var(--surface);
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+/* ── ANSWER REVEAL ── */
+.answerReveal {
+  background: rgba(0, 230, 118, 0.1);
+  border: 1.5px solid #00e676;
+  border-radius: 12px;
+  padding: 16px;
+  color: #00e676;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ── CONTROLS ── */
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.allShownMsg {
+  background: rgba(0, 230, 118, 0.1);
+  border: 1.5px solid #00e676;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #00e676;
+  font-weight: 700;
+  text-align: center;
+  flex: 1;
+  min-width: 200px;
+}
+
+.nextStagePulsing {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .setupCard {
+    padding: 20px 16px;
+  }
+
+  .setupTitle {
+    font-size: 1.4rem;
+  }
+
+  .categoryGrid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stageIndicator {
+    justify-content: center;
+  }
+
+  .categoryLabel {
+    text-align: center;
+    flex: none;
+  }
+
+  .participantLabel {
+    text-align: center;
+  }
+
+  .qBox {
+    min-height: 140px;
+    padding: 16px;
+  }
+
+  .qText {
+    font-size: 1.1rem;
+  }
+
+  .buzzRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .controls > button {
+    width: 100%;
+  }
+}

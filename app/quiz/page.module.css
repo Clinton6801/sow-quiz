@@ -172,3 +172,34 @@
   .scoreAdjust { display: none; }
   .timerDropdown { right: auto; left: 0; }
 }
+
+/* ── Round switcher ── */
+.roundSwitcher {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+}
+
+.roundSwitcher .btn {
+  border: none !important;
+  background: transparent !important;
+  color: var(--text2) !important;
+  padding: 6px 12px !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  transition: all 0.15s;
+}
+
+.roundSwitcher .btn:hover {
+  color: var(--text) !important;
+}
+
+.roundSwitcher .roundActive {
+  background: var(--gold) !important;
+  color: #000 !important;
+  border-radius: 4px;
+}
+

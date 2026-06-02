@@ -124,7 +124,7 @@ export default function RoomPage() {
     if (!room) return
     setActiveQ(q); setRevealed(false); setDoubleOn(room.double_points)
     setUsedIds(prev => new Set([...prev, q.id]))
-    const payload: QuestionPayload = { id: q.id, question: q.question, answer: q.answer, category: q.category }
+    const payload: QuestionPayload = { id: q.id, question: q.question, answer: q.answer, category: q.category, ...(q.hint ? { hint: q.hint } : {}) }
     await updateRoom(room.code, {
       status: 'question',
       current_q: payload,
@@ -295,6 +295,14 @@ export default function RoomPage() {
           <button className={`btn btn-sm ${soundOn ? 'btn-ghost' : 'btn-ghost'}`}
             onClick={() => setSoundOn(s => !s)} title="Toggle sound">
             {soundOn ? '🔊' : '🔇'}
+          </button>
+          <button className={`btn btn-sm ${room.show_hint ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={async () => {
+              if (!room) return
+              await updateRoom(room.code, { show_hint: !room.show_hint })
+              showToast(room.show_hint ? '💡 Hints hidden' : '💡 Hints visible', 'info')
+            }} title="Toggle hint visibility">
+            {room.show_hint ? '💡 Hints ON' : '💡 Hints OFF'}
           </button>
           <button className={`btn btn-sm ${room.double_points ? 'btn-warning' : 'btn-ghost'}`}
             onClick={toggleDouble} title="Toggle double points">

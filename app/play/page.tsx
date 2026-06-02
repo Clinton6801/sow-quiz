@@ -139,6 +139,12 @@ function PlayContent() {
               </p>
             </div>
 
+            {room.show_hint && room.current_q.hint && (
+              <div style={{ marginTop: 12, padding: '8px 12px', background: 'rgba(0, 230, 118, 0.1)', border: '1px solid #00e676', borderRadius: 4, color: '#00e676', fontSize: '0.9em' }}>
+                💡 Hint: {room.current_q.hint}
+              </div>
+            )}
+
             {room.status === 'buzzed' && (
               <div className={styles.buzzedInfo}>
                 {room.buzzed_by === me.name

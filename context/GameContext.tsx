@@ -12,6 +12,8 @@ interface GameCtx {
   resetScores: () => void
   lastAward: LastAward | null
   undoLastAward: () => void
+  showHints: boolean
+  setShowHints: (show: boolean) => void
 }
 
 export interface LastAward {
@@ -44,11 +46,14 @@ const Ctx = createContext<GameCtx>({
   resetScores: () => {},
   lastAward: null,
   undoLastAward: () => {},
+  showHints: false,
+  setShowHints: () => {},
 })
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [game, setGame] = useState<GameState>(defaultGame)
   const [lastAward, setLastAward] = useState<LastAward | null>(null)
+  const [showHints, setShowHints] = useState(false)
 
   const startGame = ({ section, round, pointsPerQ, teams }: {
     section: string; round: Round; pointsPerQ: number; teams: Team[]
@@ -57,6 +62,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     teams.forEach(t => { scores[t.name] = 0 })
     setGame({ section, round, pointsPerQ, teams, scores, answeredQs: {}, started: true })
     setLastAward(null)
+    setShowHints(false)
   }
 
   const awardPoints = (teamName: string, pts: number, qId?: string) => {
@@ -95,7 +101,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ game, startGame, awardPoints, adjustPoints, markAnswered, setRound, resetScores, lastAward, undoLastAward }}>
+    <Ctx.Provider value={{ game, startGame, awardPoints, adjustPoints, markAnswered, setRound, resetScores, lastAward, undoLastAward, showHints, setShowHints }}>
       {children}
     </Ctx.Provider>
   )
