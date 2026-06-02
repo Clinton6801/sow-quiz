@@ -22,6 +22,7 @@ interface SpellingWord {
   word: string
   section: string
   hint: string | null
+  audio_url: string | null
   created_at: string
 }
 
@@ -39,7 +40,10 @@ function SpellingWordsTab({ showToast }: { showToast: (msg: string, type: 'succe
   const [csvParsed,   setCsvParsed]   = useState<{ word: string; hint: string }[]>([])
   const [csvImporting,setCsvImporting]= useState(false)
   const [showCsv,     setShowCsv]     = useState(false)
+  const [audioFilter, setAudioFilter] = useState<'all' | 'has' | 'no'>('all')
+  const [uploadingWordId, setUploadingWordId] = useState<string | null>(null)
   const csvFileRef = useRef<HTMLInputElement>(null)
+  const audioFileRef = useRef<HTMLInputElement>(null)
 
   const loadWords = useCallback(async () => {
     setLoading(true)
@@ -53,6 +57,12 @@ function SpellingWordsTab({ showToast }: { showToast: (msg: string, type: 'succe
   }, [section])
 
   useEffect(() => { loadWords() }, [loadWords])
+
+  const filteredWords = words.filter(w => {
+    if (audioFilter === 'has') return w.audio_url
+    if (audioFilter === 'no') return !w.audio_url
+    return true
+  })
 
   async function handleAdd() {
     if (!newWord.trim()) { showToast('Enter a word', 'error'); return }
@@ -86,6 +96,63 @@ function SpellingWordsTab({ showToast }: { showToast: (msg: string, type: 'succe
     }).eq('id', id)
     if (error) showToast('Error updating', 'error')
     else { showToast('Updated!', 'success'); setEditingId(null); loadWords() }
+  }
+
+  async function handleAudioUpload(wordId: string, file: File | null) {
+    if (!file) return
+    
+    const allowedTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4']
+    if (!allowedTypes.includes(file.type)) {
+      showToast('Invalid file type. Use MP3, WAV, OGG, or M4A', 'error')
+      return
+    }
+
+    setUploadingWordId(wordId)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('wordId', wordId)
+      formData.append('section', section)
+
+      const response = await fetch('/api/spelling-audio', {
+        method: 'POST',
+        headers: { 'x-admin-password': 'sow2025' },
+        body: formData,
+      })
+
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Upload failed')
+      
+      showToast('✅ Audio uploaded!', 'success')
+      loadWords()
+    } catch (err: any) {
+      showToast(err.message || 'Upload failed', 'error')
+    } finally {
+      setUploadingWordId(null)
+    }
+  }
+
+  async function handleRemoveAudio(wordId: string, filePath: string) {
+    if (!confirm('Remove this audio recording?')) return
+    
+    try {
+      const response = await fetch('/api/spelling-audio', {
+        method: 'DELETE',
+        headers: {
+          'x-admin-password': 'sow2025',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ wordId, filePath }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Delete failed')
+      
+      showToast('✅ Audio removed!', 'success')
+      loadWords()
+    } catch (err: any) {
+      showToast(err.message || 'Delete failed', 'error')
+    }
   }
 
   function parseCsv(text: string) {
@@ -179,11 +246,35 @@ function SpellingWordsTab({ showToast }: { showToast: (msg: string, type: 'succe
         </div>
       )}
 
+      {/* Audio filter */}
+      <div style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
+        <span style={{ fontSize: '0.9rem', color: 'var(--text2)', fontWeight: 500 }}>Filter:</span>
+        <button
+          className={`btn btn-sm ${audioFilter === 'all' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setAudioFilter('all')}
+        >
+          All
+        </button>
+        <button
+          className={`btn btn-sm ${audioFilter === 'has' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setAudioFilter('has')}
+        >
+          🎵 Has Audio
+        </button>
+        <button
+          className={`btn btn-sm ${audioFilter === 'no' ? 'btn-primary' : 'btn-ghost'}`}
+          onClick={() => setAudioFilter('no')}
+        >
+          🔇 No Audio
+        </button>
+      </div>
+
       {/* Word list */}
       <div className={styles.list}>
         {loading ? <p className={styles.listEmpty}>Loading…</p>
           : words.length === 0 ? <p className={styles.listEmpty}>No words yet for this section.</p>
-          : words.map((w, i) => (
+          : filteredWords.length === 0 ? <p className={styles.listEmpty}>No words match the selected filter.</p>
+          : filteredWords.map((w, i) => (
             <div key={w.id} className={styles.item}>
               {editingId === w.id ? (
                 <div className={styles.editForm}>
@@ -191,7 +282,58 @@ function SpellingWordsTab({ showToast }: { showToast: (msg: string, type: 'succe
                     onChange={e => setEditVal(v => ({ ...v, word: e.target.value }))} placeholder="Word" />
                   <input className={styles.editInput} value={editVal.hint}
                     onChange={e => setEditVal(v => ({ ...v, hint: e.target.value }))} placeholder="Hint (optional)" />
-                  <div className={styles.editBtns}>
+                  
+                  {/* Audio Recording Section */}
+                  <div style={{
+                    marginTop: 12,
+                    padding: '12px',
+                    border: '1px solid #00e5ff',
+                    borderRadius: 'var(--radius-sm, 4px)',
+                    backgroundColor: 'rgba(0, 229, 255, 0.05)',
+                  }}>
+                    <label className="form-label" style={{ fontSize: '0.85rem', marginBottom: 8 }}>🎵 Audio Recording</label>
+                    
+                    {w.audio_url && (
+                      <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <audio controls style={{ flex: 1, height: 32 }} src={w.audio_url} />
+                      </div>
+                    )}
+                    
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <input
+                        ref={audioFileRef}
+                        type="file"
+                        accept=".mp3,.wav,.ogg,.m4a"
+                        onChange={e => {
+                          const file = e.target.files?.[0]
+                          if (file) handleAudioUpload(w.id, file)
+                          e.target.value = ''
+                        }}
+                        style={{ display: 'none' }}
+                      />
+                      <button
+                        className="btn btn-sm btn-ghost"
+                        onClick={() => audioFileRef.current?.click()}
+                        disabled={uploadingWordId === w.id}
+                      >
+                        {uploadingWordId === w.id ? '⏳ Uploading…' : '📤 Upload Audio'}
+                      </button>
+                      {w.audio_url && (
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => {
+                            const pathParts = w.audio_url!.split('/')
+                            const filePath = `${section}/${pathParts[pathParts.length - 1]}`
+                            handleRemoveAudio(w.id, filePath)
+                          }}
+                        >
+                          ✕ Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className={styles.editBtns} style={{ marginTop: 12 }}>
                     <button className="btn btn-green btn-sm" onClick={() => saveEdit(w.id)}>Save</button>
                     <button className="btn btn-ghost btn-sm" onClick={() => setEditingId(null)}>Cancel</button>
                   </div>
@@ -200,6 +342,11 @@ function SpellingWordsTab({ showToast }: { showToast: (msg: string, type: 'succe
                 <>
                   <div className={styles.qInfo}>
                     <strong className={styles.qText}>{i + 1}. {w.word}</strong>
+                    {w.audio_url ? (
+                      <span style={{ fontSize: '0.8rem', color: '#00e676', fontWeight: 600 }}>🎵</span>
+                    ) : (
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text2)' }}>🔇 No audio</span>
+                    )}
                     {w.hint && <span className={styles.qHint}>💡 {w.hint}</span>}
                   </div>
                   <div className={styles.itemBtns}>

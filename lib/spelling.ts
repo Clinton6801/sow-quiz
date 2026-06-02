@@ -1,3 +1,5 @@
+import { supabase } from './supabase'
+
 /**
  * Spelling game utilities.
  *
@@ -56,4 +58,49 @@ export function streakMultiplier(streak: number): number {
  */
 export function calcPoints(streak: number): number {
   return Math.round(10 * streakMultiplier(streak))
+}
+
+export interface SpellingWord {
+  id: string
+  word: string
+  section: string
+  hint: string | null
+  audio_url: string | null
+  created_at: string
+}
+
+/**
+ * Get all spelling words for a section.
+ * Includes audio_url so teacher recordings can be played at game time.
+ */
+export async function getSpellingWords(section: string): Promise<SpellingWord[]> {
+  const { data, error } = await supabase
+    .from('spelling_words')
+    .select('id, word, section, hint, audio_url, created_at')
+    .eq('section', section)
+    .order('word', { ascending: true })
+
+  if (error) throw error
+  return (data as SpellingWord[]) || []
+}
+
+/**
+ * Get spelling words grouped by section.
+ * Includes audio_url for playback at game time.
+ */
+export async function getWordsBySection(section: string): Promise<Record<string, SpellingWord[]>> {
+  const { data, error } = await supabase
+    .from('spelling_words')
+    .select('id, word, section, hint, audio_url, created_at')
+    .eq('section', section)
+    .order('word', { ascending: true })
+
+  if (error) throw error
+
+  const grouped: Record<string, SpellingWord[]> = {}
+  for (const w of (data as SpellingWord[])) {
+    if (!grouped[w.section]) grouped[w.section] = []
+    grouped[w.section].push(w)
+  }
+  return grouped
 }

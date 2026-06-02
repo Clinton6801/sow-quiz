@@ -34,6 +34,16 @@ create table if not exists leaderboard (
   created_at timestamptz default now()
 );
 
+create table if not exists spelling_words (
+  id uuid default gen_random_uuid() primary key,
+  section text not null,
+  word text not null,
+  hint text default null,
+  audio_url text default null,
+  created_at timestamptz default now(),
+  constraint unique_word_section unique(section, word)
+);
+
 alter table questions enable row level security;
 alter table leaderboard enable row level security;
 drop policy if exists "public_questions" on questions;
@@ -226,3 +236,18 @@ insert into questions (section, category, question, answer) values
 ('Grand Legends','General Knowledge','What is blockchain technology primarily used for?','Cryptocurrency and distributed ledgers'),
 ('Grand Legends','General Knowledge','What is the name of the membrane that surrounds the nucleus?','Nuclear envelope'),
 ('Grand Legends','General Knowledge','What is the primary function of mitochondria?','ATP production (cellular respiration)');
+
+-- =====================================================
+-- Spelling Audio Storage Bucket
+-- =====================================================
+-- Create spelling-audio bucket for teacher recordings
+insert into storage.buckets (id, name, public) values ('spelling-audio', 'spelling-audio', true) on conflict (id) do nothing;
+
+-- Allow public read access to spelling audio files
+create policy if not exists "Public can read spelling audio" on storage.objects for select using (bucket_id = 'spelling-audio');
+
+-- Allow admin uploads via service role key (handled server-side in API route)
+create policy if not exists "Service role can upload spelling audio" on storage.objects for insert with check (bucket_id = 'spelling-audio');
+
+-- Alter spelling_words table to ensure audio_url column exists
+alter table spelling_words add column if not exists audio_url text default null;

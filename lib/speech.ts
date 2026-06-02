@@ -104,6 +104,43 @@ function speak(
 }
 
 /**
+ * playWordAudio — unified audio playback for spelling words.
+ *
+ * If audioUrl is provided and valid: plays the teacher recording.
+ * If audioUrl is null/undefined or playback fails: falls back to TTS via speakWord().
+ * Returns a promise that resolves when playback completes (or immediately if using TTS).
+ *
+ * From the player's perspective, the 🔊 button works the same either way.
+ */
+export async function playWordAudio(word: string, audioUrl?: string | null): Promise<void> {
+  if (typeof window === 'undefined') return
+
+  // If audioUrl is provided, try to play it
+  if (audioUrl) {
+    try {
+      return new Promise((resolve, reject) => {
+        const audio = new Audio(audioUrl)
+        audio.addEventListener('ended', () => resolve(), { once: true })
+        audio.addEventListener('error', () => {
+          // Fallback to TTS if audio fails
+          speakWord(word).then(resolve).catch(reject)
+        }, { once: true })
+        audio.play().catch(() => {
+          // If play() fails immediately, fallback to TTS
+          speakWord(word).then(resolve).catch(reject)
+        })
+      })
+    } catch (err) {
+      // If anything goes wrong, fallback to TTS
+      return speakWord(word)
+    }
+  }
+
+  // No audio URL provided, use TTS
+  return speakWord(word)
+}
+
+/**
  * speakWord — used when a new spelling bee question loads or the host
  * clicks "Hear the Word".
  *
