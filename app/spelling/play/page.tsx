@@ -14,7 +14,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { speakWord, repeatWord } from '@/lib/speech'
+import { speakWord, repeatWord, playWordAudio } from '@/lib/speech'
 import { maskWordChars, normaliseAnswer, calcPoints, streakMultiplier } from '@/lib/spelling'
 import styles from './page.module.css'
 
@@ -26,6 +26,7 @@ interface SpellingWord {
   word: string
   section: string
   hint: string | null
+  audio_url: string | null
 }
 
 type FeedbackState = 'idle' | 'correct' | 'wrong' | 'timeout'
@@ -70,7 +71,7 @@ export default function SpellingPlayPage() {
 
   async function loadWords(sec: string) {
     setLoading(true)
-    let query = supabase.from('spelling_words').select('id, word, section, hint')
+    let query = supabase.from('spelling_words').select('id, word, section, hint, audio_url')
     if (sec !== 'All Sections') query = query.eq('section', sec)
 
     const { data, error: dbErr } = await query
@@ -119,7 +120,7 @@ export default function SpellingPlayPage() {
       advancingRef.current = false
       startTimer()
       const t = setTimeout(() => {
-        if (words[currentIndex]) speakWord(words[currentIndex].word)
+        if (words[currentIndex]) playWordAudio(words[currentIndex].word, words[currentIndex].audio_url)
       }, 500)
       return () => {
         clearTimeout(t)
@@ -202,7 +203,7 @@ export default function SpellingPlayPage() {
   async function handleHearWord() {
     if (!words[currentIndex]) return
     setSpeaking(true)
-    await repeatWord(words[currentIndex].word)
+    await playWordAudio(words[currentIndex].word, words[currentIndex].audio_url)
     setTimeout(() => setSpeaking(false), 1800)
   }
 
