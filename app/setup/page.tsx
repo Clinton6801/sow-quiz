@@ -121,7 +121,7 @@ function PhotoModal({ name, onCapture, onClose }: {
 function SetupForm() {
   const router = useRouter()
   const params = useSearchParams()
-  const { startGame } = useGame()
+  const { startGame, clearSavedGame } = useGame()
   const { authed, checked } = useAdminAuth()
 
   const [showGate,    setShowGate]    = useState(false)
@@ -159,6 +159,7 @@ function SetupForm() {
   }
 
   const doStart = () => {
+    clearSavedGame()
     startGame({ section, round, pointsPerQ: Number(pointsPerQ) || 10, teams })
     router.push('/quiz')
   }

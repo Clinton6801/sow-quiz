@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { GameState, Team, Round } from '../lib/types'
 
 interface GameCtx {
@@ -10,6 +10,7 @@ interface GameCtx {
   markAnswered: (qId: string) => void
   setRound: (r: Round) => void
   resetScores: () => void
+  clearSavedGame: () => void
   lastAward: LastAward | null
   undoLastAward: () => void
   showHints: boolean
@@ -23,7 +24,7 @@ export interface LastAward {
 }
 
 const defaultGame: GameState = {
-  section: 'Lower Primary',
+  section: 'Little Sprouts',
   round: 'round1',
   pointsPerQ: 10,
   teams: [
@@ -44,6 +45,7 @@ const Ctx = createContext<GameCtx>({
   markAnswered: () => {},
   setRound: () => {},
   resetScores: () => {},
+  clearSavedGame: () => {},
   lastAward: null,
   undoLastAward: () => {},
   showHints: false,
@@ -54,13 +56,42 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [game, setGame] = useState<GameState>(defaultGame)
   const [lastAward, setLastAward] = useState<LastAward | null>(null)
   const [showHints, setShowHints] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+
+  // Initialize from localStorage on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const saved = localStorage.getItem('sow_game_state')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        setGame(parsed)
+      } catch (err) {
+        console.error('Failed to restore game state:', err)
+      }
+    }
+    setHydrated(true)
+  }, [])
+
+  // Save game state to localStorage whenever it changes
+  useEffect(() => {
+    if (!hydrated || typeof window === 'undefined') return
+    localStorage.setItem('sow_game_state', JSON.stringify(game))
+  }, [game, hydrated])
+
+  const clearSavedGame = () => {
+    if (typeof window === 'undefined') return
+    localStorage.removeItem('sow_game_state')
+    localStorage.removeItem('gauntlet_stage_pool')
+  }
 
   const startGame = ({ section, round, pointsPerQ, teams }: {
     section: string; round: Round; pointsPerQ: number; teams: Team[]
   }) => {
     const scores: Record<string, number> = {}
     teams.forEach(t => { scores[t.name] = 0 })
-    setGame({ section, round, pointsPerQ, teams, scores, answeredQs: {}, started: true })
+    const sessionId = typeof window !== 'undefined' ? crypto.randomUUID() : undefined
+    setGame({ section, round, pointsPerQ, teams, scores, answeredQs: {}, started: true, sessionId })
     setLastAward(null)
     setShowHints(false)
   }
@@ -92,6 +123,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const setRound = (round: Round) => setGame(g => ({ ...g, round }))
 
   const resetScores = () => {
+    clearSavedGame()
     setGame(g => ({
       ...g,
       scores: Object.fromEntries(g.teams.map(t => [t.name, 0])),
@@ -101,7 +133,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ game, startGame, awardPoints, adjustPoints, markAnswered, setRound, resetScores, lastAward, undoLastAward, showHints, setShowHints }}>
+    <Ctx.Provider value={{ game, startGame, awardPoints, adjustPoints, markAnswered, setRound, resetScores, clearSavedGame, lastAward, undoLastAward, showHints, setShowHints }}>
       {children}
     </Ctx.Provider>
   )

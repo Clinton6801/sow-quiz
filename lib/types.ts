@@ -25,6 +25,7 @@ export interface GameState {
   scores: Record<string, number>
   answeredQs: Record<string, boolean>
   started: boolean
+  sessionId?: string  // UUID for live spectator sessions
   gauntletParticipants?: number
   gauntletCategory?: string
   gauntletStage?: 'easy' | 'moderate' | 'hard' | 'champion'

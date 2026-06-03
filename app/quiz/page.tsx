@@ -1,20 +1,131 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useGame } from '../../context/GameContext'
+import { supabase } from '../../lib/supabase'
 import ScoreBoard from '../../components/quiz/ScoreBoard'
 import Round1Grid from '../../components/quiz/Round1Grid'
 import Round2FastFingers from '../../components/quiz/Round2FastFingers'
 import Round3Gauntlet from '../../components/quiz/Round3Gauntlet'
 import styles from './page.module.css'
 
+const roundNames: Record<string, string> = {
+  'round1': 'The Grid',
+  'round2': 'Lightning Round',
+  'round3': 'The Gauntlet',
+}
+
+const roundDescriptions: Record<string, string> = {
+  'round1': 'Pick a question number from the board',
+  'round2': 'Fastest finger takes the point',
+  'round3': 'Four stages of increasing difficulty',
+}
+
 export default function QuizPage() {
   const router = useRouter()
-  const { game, setRound, lastAward, undoLastAward, adjustPoints } = useGame()
+  const { game, setRound, lastAward, undoLastAward, adjustPoints, clearSavedGame } = useGame()
   const [showEndScreen, setShowEndScreen] = useState(false)
   const [showTimerConfig, setShowTimerConfig] = useState(false)
   const [timerSeconds, setTimerSeconds] = useState<number | undefined>(undefined)
   const [timerInput, setTimerInput] = useState(30)
+  const [sessionRestored, setSessionRestored] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
+  const realtimeChannelRef = useRef<any>(null)
+
+  // Check if session was restored from localStorage
+  useEffect(() => {
+    if (game.started && typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sow_game_state')
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          if (parsed.started) {
+            setSessionRestored(true)
+            const timer = setTimeout(() => setSessionRestored(false), 4000)
+            return () => clearTimeout(timer)
+          }
+        } catch (err) {
+          console.error('Failed to check session state:', err)
+        }
+      }
+    }
+  }, [game.started])
+
+  // Realtime broadcast setup
+  useEffect(() => {
+    if (!game.sessionId || !game.started) return
+
+    const channel = supabase.channel(`solo:${game.sessionId}`)
+    realtimeChannelRef.current = channel
+
+    channel
+      .on('broadcast', { event: 'any' }, (payload) => {
+        // Listeners set up, channel is ready
+      })
+      .subscribe()
+
+    return () => {
+      channel.unsubscribe()
+    }
+  }, [game.sessionId, game.started])
+
+  // Broadcast quiz started event
+  useEffect(() => {
+    if (!game.sessionId || !game.started || !realtimeChannelRef.current) return
+
+    const channel = realtimeChannelRef.current
+    channel.send({
+      type: 'broadcast',
+      event: 'quiz_started',
+      payload: {
+        section: game.section,
+        teams: game.teams.map(t => ({ name: t.name, color: t.color })),
+        totalQuestions: 20,
+        startedAt: new Date().toISOString(),
+      },
+    })
+  }, [game.started])
+
+  // Broadcast round change
+  useEffect(() => {
+    if (!game.sessionId || !realtimeChannelRef.current) return
+
+    const channel = realtimeChannelRef.current
+    channel.send({
+      type: 'broadcast',
+      event: 'round_change',
+      payload: {
+        round: game.round,
+        roundName: roundNames[game.round],
+      },
+    })
+  }, [game.round, game.sessionId])
+
+  // Broadcast scores
+  useEffect(() => {
+    if (!game.sessionId || !realtimeChannelRef.current) return
+
+    const channel = realtimeChannelRef.current
+    channel.send({
+      type: 'broadcast',
+      event: 'scores',
+      payload: {
+        scores: game.teams.map(t => ({
+          name: t.name,
+          color: t.color,
+          score: game.scores[t.name] || 0,
+        })),
+      },
+    })
+  }, [game.scores, game.sessionId])
+
+  const copyShareLink = () => {
+    if (!game.sessionId) return
+    const link = `${typeof window !== 'undefined' ? window.location.origin : ''}/watch/${game.sessionId}`
+    navigator.clipboard.writeText(link)
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 2000)
+  }
 
   if (!game.started) {
     return (
@@ -100,10 +211,16 @@ export default function QuizPage() {
         </div>
 
         <div className={styles.endBtns}>
-          <button className="btn btn-primary" onClick={() => router.push('/leaderboard')}>
+          <button className="btn btn-primary" onClick={() => {
+            clearSavedGame()
+            router.push('/leaderboard')
+          }}>
             📊 Leaderboard
           </button>
-          <button className="btn btn-ghost" onClick={() => router.push('/setup')}>
+          <button className="btn btn-ghost" onClick={() => {
+            clearSavedGame()
+            router.push('/setup')
+          }}>
             🔄 New Game
           </button>
         </div>
@@ -114,10 +231,27 @@ export default function QuizPage() {
   // ── ACTIVE QUIZ ──
   return (
     <div className="page" style={{ maxWidth: 960 }}>
+      {/* Session restored banner */}
+      {sessionRestored && (
+        <div style={{
+          width: '100%',
+          borderLeft: '4px solid #00e5ff',
+          backgroundColor: '#0f1535',
+          padding: '12px 16px',
+          marginBottom: '16px',
+          borderRadius: '4px',
+          color: '#fff',
+          fontSize: '0.9rem',
+          fontWeight: 500,
+        }}>
+          🔄 Session restored — your previous quiz has been recovered
+        </div>
+      )}
+
       <div className={styles.topBar}>
         <div>
           <h1 className={styles.roundTitle}>
-            {game.round === 'round1' ? 'Round 1 — Pick a Number' : game.round === 'round2' ? 'Round 2 — Fastest Fingers' : 'Round 3 — Gauntlet'}
+            {roundNames[game.round] || game.round}
           </h1>
           <p className={styles.sectionLabel}>{game.section}</p>
         </div>
@@ -185,17 +319,25 @@ export default function QuizPage() {
           <div className={styles.roundSwitcher}>
             <button className={`btn btn-ghost btn-sm ${game.round === 'round1' ? styles.roundActive : ''}`}
               onClick={() => setRound('round1')}>
-              Round 1
+              The Grid
             </button>
             <button className={`btn btn-ghost btn-sm ${game.round === 'round2' ? styles.roundActive : ''}`}
               onClick={() => setRound('round2')}>
-              Round 2
+              Lightning Round
             </button>
             <button className={`btn btn-ghost btn-sm ${game.round === 'round3' ? styles.roundActive : ''}`}
               onClick={() => setRound('round3')}>
-              Round 3
+              The Gauntlet
             </button>
           </div>
+          <button 
+            className="btn btn-ghost btn-sm"
+            onClick={copyShareLink}
+            style={{ borderColor: '#00e5ff', color: '#00e5ff' }}
+            title="Copy spectator link to clipboard"
+          >
+            {linkCopied ? '✅ Link Copied!' : '🔗 Share Live Link'}
+          </button>
           <button className="btn btn-danger btn-sm" onClick={() => setShowEndScreen(true)}>
             🏁 End Quiz
           </button>
