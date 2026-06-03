@@ -82,8 +82,12 @@ export default function SpellingPlayPage() {
       return
     }
 
+    console.log('[loadWords] Fetched words:', data.slice(0, 3))
+
     const shuffled = [...data].sort(() => Math.random() - 0.5)
-    setWords(shuffled.slice(0, TOTAL_WORDS) as SpellingWord[])
+    const selectedWords = shuffled.slice(0, TOTAL_WORDS) as SpellingWord[]
+    console.log('[loadWords] Selected words with audio_url:', selectedWords.map(w => ({ word: w.word, audio_url: w.audio_url })))
+    setWords(selectedWords)
     setLoading(false)
   }
 

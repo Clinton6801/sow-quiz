@@ -55,6 +55,8 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
+    console.log(`[spelling-audio] Uploading ${filePath}...`)
+
     const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from('spelling-audio')
       .upload(filePath, buffer, {
@@ -63,6 +65,7 @@ export async function POST(req: NextRequest) {
       })
 
     if (uploadError) {
+      console.log(`[spelling-audio] Upload error:`, uploadError)
       return NextResponse.json(
         { error: `Upload failed: ${uploadError.message}` },
         { status: 500 }
@@ -75,22 +78,28 @@ export async function POST(req: NextRequest) {
       .getPublicUrl(filePath)
 
     const publicUrl = publicUrlData.publicUrl
+    console.log(`[spelling-audio] Public URL: ${publicUrl}`)
 
     // Update database with audio URL
-    const { error: updateError } = await supabaseAdmin
+    const { data: updateData, error: updateError } = await supabaseAdmin
       .from('spelling_words')
       .update({ audio_url: publicUrl })
       .eq('id', wordId)
+      .select('id, word, audio_url')
 
     if (updateError) {
+      console.log(`[spelling-audio] Database update error:`, updateError)
       return NextResponse.json(
         { error: `Database update failed: ${updateError.message}` },
         { status: 500 }
       )
     }
 
+    console.log(`[spelling-audio] Successfully saved audio_url to database:`, updateData)
+
     return NextResponse.json({ success: true, url: publicUrl })
   } catch (err: any) {
+    console.log(`[spelling-audio] Exception:`, err)
     return NextResponse.json(
       { error: err.message || 'Server error' },
       { status: 500 }
@@ -130,12 +139,15 @@ export async function DELETE(req: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY
     )
 
+    console.log(`[spelling-audio] Deleting ${filePath}...`)
+
     // Delete from storage
     const { error: deleteError } = await supabaseAdmin.storage
       .from('spelling-audio')
       .remove([filePath])
 
     if (deleteError) {
+      console.log(`[spelling-audio] Delete error:`, deleteError)
       return NextResponse.json(
         { error: `Delete failed: ${deleteError.message}` },
         { status: 500 }
@@ -149,14 +161,18 @@ export async function DELETE(req: NextRequest) {
       .eq('id', wordId)
 
     if (updateError) {
+      console.log(`[spelling-audio] Database update error:`, updateError)
       return NextResponse.json(
         { error: `Database update failed: ${updateError.message}` },
         { status: 500 }
       )
     }
 
+    console.log(`[spelling-audio] Successfully deleted audio for word ${wordId}`)
+
     return NextResponse.json({ success: true })
   } catch (err: any) {
+    console.log(`[spelling-audio] Exception:`, err)
     return NextResponse.json(
       { error: err.message || 'Server error' },
       { status: 500 }

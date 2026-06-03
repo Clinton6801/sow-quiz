@@ -115,28 +115,53 @@ function speak(
 export async function playWordAudio(word: string, audioUrl?: string | null): Promise<void> {
   if (typeof window === 'undefined') return
 
+  console.log(`[playWordAudio] word="${word}", audioUrl="${audioUrl}"`)
+
   // If audioUrl is provided, try to play it
-  if (audioUrl) {
+  if (audioUrl && audioUrl.trim() !== '') {
     try {
       return new Promise((resolve, reject) => {
-        const audio = new Audio(audioUrl)
-        audio.addEventListener('ended', () => resolve(), { once: true })
-        audio.addEventListener('error', () => {
+        const audio = new Audio()
+        
+        const onEnded = () => {
+          console.log(`[playWordAudio] Audio playback ended for "${word}"`)
+          audio.removeEventListener('ended', onEnded)
+          audio.removeEventListener('error', onError)
+          resolve()
+        }
+        
+        const onError = (e: Event) => {
+          console.log(`[playWordAudio] Audio playback error for "${word}":`, (e.target as HTMLAudioElement).error)
+          audio.removeEventListener('ended', onEnded)
+          audio.removeEventListener('error', onError)
           // Fallback to TTS if audio fails
           speakWord(word).then(resolve).catch(reject)
-        }, { once: true })
-        audio.play().catch(() => {
+        }
+        
+        audio.addEventListener('ended', onEnded, { once: true })
+        audio.addEventListener('error', onError, { once: true })
+        
+        // Set source with potential CORS handling
+        audio.crossOrigin = 'anonymous'
+        audio.src = audioUrl
+        
+        audio.play().catch((err) => {
+          console.log(`[playWordAudio] play() error for "${word}":`, err)
+          audio.removeEventListener('ended', onEnded)
+          audio.removeEventListener('error', onError)
           // If play() fails immediately, fallback to TTS
           speakWord(word).then(resolve).catch(reject)
         })
       })
     } catch (err) {
+      console.log(`[playWordAudio] Exception for "${word}":`, err)
       // If anything goes wrong, fallback to TTS
       return speakWord(word)
     }
   }
 
   // No audio URL provided, use TTS
+  console.log(`[playWordAudio] No audio URL for "${word}", using TTS`)
   return speakWord(word)
 }
 
